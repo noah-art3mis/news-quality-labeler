@@ -1,6 +1,8 @@
 import { sourceBoundary } from './host-policy.ts';
 import { webUrl } from './model.ts';
 import type { AssessedLink, RatingSnapshot, SourceAssessment } from './model.ts';
+import { classifyQuality } from './quality-policy.ts';
+import type { QualityPolicy } from './quality-policy.ts';
 
 export function matchSource(url: URL, snapshot: RatingSnapshot): { source: string; score: number } | null {
   const host = url.hostname;
@@ -22,7 +24,7 @@ export function matchSource(url: URL, snapshot: RatingSnapshot): { source: strin
   return null;
 }
 
-export function assessLinks(links: AssessedLink[], snapshot: RatingSnapshot): SourceAssessment[] {
+export function assessLinks(links: AssessedLink[], snapshot: RatingSnapshot, policy: QualityPolicy): SourceAssessment[] {
   const groups = new Map<string, SourceAssessment>();
   for (const link of links) {
     const url = link.destination ? webUrl(link.destination) : null;
@@ -30,7 +32,9 @@ export function assessLinks(links: AssessedLink[], snapshot: RatingSnapshot): So
     const status = !url ? 'unresolved' : match ? 'rated' : 'unmatched';
     const source = match?.source ?? url?.hostname ?? link.original;
     const key = `${status}:${source}`;
-    const group = groups.get(key) ?? { status, source, score: match?.score ?? null, links: [] };
+    const group: SourceAssessment = groups.get(key) ?? (match
+      ? { status: 'rated', source, score: match.score, category: classifyQuality(match.score, policy), links: [] }
+      : { status: url ? 'unmatched' : 'unresolved', source, score: null, category: null, links: [] });
     group.links.push(link);
     groups.set(key, group);
   }

@@ -4,9 +4,11 @@ The core domain is source assessment: determine which source entry supplies a li
 
 ## Functional core
 
-`src/labeling/` owns post-URL validation, source matching, hosting boundaries, and grouping. Its functions accept values and return assessments. They do not read the network, filesystem, environment, or clock. `src/ratings/snapshot.ts` translates CSV content into a validated rating snapshot.
+`src/labeling/` owns post-URL validation, source matching, hosting boundaries, grouping, and source-quality classification. Its functions accept values and return assessments. They do not read the network, filesystem, environment, or clock. `src/ratings/snapshot.ts` translates CSV content into a validated rating snapshot.
 
 The matching order is section, exact hostname, then permitted parent hostname. Section matches require the same hostname and a path-segment boundary. Parent matches stop at the independently operated site's boundary. `SourceAssessment.status` explicitly distinguishes rated, unmatched, and unresolved results; display text is never parsed back into a decision.
+
+The versioned provisional category policy lives in `src/labeling/quality-policy.ts`. The use case passes it explicitly to the pure assessment function and returns it with the result, so displayed boundaries describe the policy used. Rated results carry both score and category; unmatched and unresolved results carry neither.
 
 ## Imperative shell
 

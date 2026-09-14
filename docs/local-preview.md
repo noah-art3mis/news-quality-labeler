@@ -6,9 +6,9 @@ Build the local preview first. Public label publication and the subscriber exper
 
 The user opens a local webpage, pastes a Bluesky post URL, and sees its linked sources and ratings.
 
-For each linked domain, show its numerical source rating and the dataset version. Show “Not in dataset” for unmatched domains. The first preview shows numerical ratings; category thresholds will be chosen after inspecting examples.
+For each linked domain, show its numerical source rating and the dataset version. Show “Not in dataset” for unmatched domains. The preview also shows a provisional category using `source-quality-v1`: low below 0.40, medium from 0.40 to below 0.70, high from 0.70. Compare the unrounded score; expose it under “Exact score”. Unmatched and unresolved links receive no category.
 
-The planned category labels are “Low quality news source”, “Medium quality news source”, and “High quality news source”. These describe the linked source rather than the accuracy of the article or the views of the person sharing it.
+The local category labels are “Low quality news source”, “Medium quality news source”, and “High quality news source”. These describe the linked source rather than the accuracy of the article or the views of the person sharing it.
 
 Inspect links directly attached to the submitted post and the direct links of its quoted post, if publicly available. Follow only one quote level. Mark quoted links “Source from quoted post” and display the quoted post's text and author. If a quoted post is unavailable, retain the direct results and show a notice. If the quoted post quotes another post, note that further quotes have not been inspected.
 

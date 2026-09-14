@@ -71,9 +71,9 @@ const exampleTable = table(['Source entry', 'PC1', 'Proposed category'], example
   [e.source, e.score!.toFixed(3), e.proposedCategory]));
 const sensitivityTable = table(['Cutoff', 'Move down by 0.025', 'Move up by 0.025'], sensitivity.map(s =>
   [s.cutoff.toFixed(2), `${s.belowWithin0025} entries switch`, `${s.aboveWithin0025} entries switch`]));
-const reportMarkdown = `# Proposed source-quality thresholds
+const reportMarkdown = `# Source-quality threshold analysis
 
-Status: proposal for local-preview evaluation; not adopted by the application and not a validated public-label policy.
+Status: the 0.40 / 0.70 candidate was adopted for local-preview evaluation as provisional project policy \`source-quality-v1\`. It is not a validated public-label policy.
 
 ## Recommendation
 
@@ -109,7 +109,7 @@ The following counts show how many entries switch if only one boundary moves; th
 
 ${sensitivityTable}
 
-For example, clinicaltrialsarena.com has score 0.699984811952302 while jamanetwork.com has 0.700002508921952. Both display as 0.700 at three decimals but lie on opposite sides of the proposed high cutoff. A future categorical preview should expose sufficient precision or explain near-boundary results instead of implying a meaningful quality gap.
+For example, clinicaltrialsarena.com has score 0.699984811952302 while jamanetwork.com has 0.700002508921952. Both display as 0.700 at three decimals but lie on opposite sides of the proposed high cutoff. The local preview exposes the original score under “Exact score”; a category boundary does not imply a meaningful quality gap.
 
 ## What this analysis cannot establish
 
@@ -123,7 +123,7 @@ The Onion scores ${snapshot.ratings.get('theonion.com')!.toFixed(3)} and Babylon
 
 ## Decision to make
 
-Approve 0.40 / 0.70 for a **local categorical preview**, or choose an alternative after inspecting these consequences. Keep the score, matched entry, snapshot, and proposed-policy status visible. Independently validating the categories and deciding mixed-source publication behavior remain separate steps before public label publication.
+The user approved 0.40 / 0.70 for the **local categorical preview**. The preview keeps the score, matched entry, snapshot, and provisional-policy status visible. Independently validating the categories and deciding mixed-source publication behavior remain separate steps before public label publication.
 `;
 await writeFile(new URL('../docs/threshold-analysis.md', import.meta.url), reportMarkdown);
 console.log(JSON.stringify({ entries: report.totalEntries, candidates, sensitivity }, null, 2));

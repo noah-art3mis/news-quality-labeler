@@ -17,7 +17,7 @@ A linked domain for which no corresponding rating is found in the selected datas
 _Avoid_: Low-quality source
 
 **Source quality category**:
-One of “Low quality news source”, “Medium quality news source”, or “High quality news source”, assigned from a source rating using agreed thresholds.
+One of “Low quality news source”, “Medium quality news source”, or “High quality news source”, assigned from the unrounded source rating using a versioned project policy. The local preview uses the provisional `source-quality-v1` policy in `src/labeling/quality-policy.ts`; the paper does not validate these categories.
 _Avoid_: Article verdict
 
 **Matched source entry**:

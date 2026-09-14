@@ -1,6 +1,7 @@
 import { assessLinks } from '../labeling/assess.ts';
 import { parsePostUrl, webUrl } from '../labeling/model.ts';
 import { shorteners } from '../labeling/host-policy.ts';
+import { localQualityPolicy } from '../labeling/quality-policy.ts';
 import type { AssessedLink, Post, PostReference, PostSummary, Preview, QuoteInspection, RatingSnapshot } from '../labeling/model.ts';
 
 const summarize = ({ uri, author, text }: Post): PostSummary => ({ uri, author, text });
@@ -45,7 +46,8 @@ export function createPreview(deps: {
       quote,
       snapshot: { version: deps.ratings.version,
         url: `https://github.com/hauselin/domain-quality-ratings/tree/${deps.ratings.version}/data` },
-      sources: assessLinks(links, deps.ratings),
+      policy: localQualityPolicy,
+      sources: assessLinks(links, deps.ratings, localQualityPolicy),
     };
   };
 }
