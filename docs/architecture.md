@@ -10,6 +10,8 @@ The matching order is section, exact hostname, then permitted parent hostname. S
 
 The versioned provisional category policy lives in `src/labeling/quality-policy.ts`. The use case passes it explicitly to the pure assessment function and returns it with the result, so displayed boundaries describe the policy used. Rated results carry both score and category; unmatched and unresolved results carry neither.
 
+`src/labeling/post-labels.ts` derives a distinct, ordered category set from the assessed sources. Both direct and one-level quoted sources contribute to the submitted post's proposal. The application returns this proposal beside the source evidence; the webpage renders it without reimplementing label decisions.
+
 ## Imperative shell
 
 `src/application/preview.ts` exposes the assessment use case. It accepts a snapshot, a public-post reader, and a destination resolver. It retrieves the submitted post and at most one quoted post, resolves supported shortened links, then calls the pure core. Each assessed link carries its direct or quoted origin. The webpage and tests call this same operation.

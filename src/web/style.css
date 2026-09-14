@@ -57,6 +57,10 @@ meter::-webkit-meter-bar { background: #e3eae6; border: 0; }
 meter::-webkit-meter-optimum-value { background: #70998c; }
 meter::-moz-meter-bar { background: #70998c; }
 .category { font-size: 14px; font-weight: 600; margin: 16px 0 10px; }
+.post-labels { border: 1px solid var(--line); padding: 20px; margin: 22px 0; }
+.post-labels h3 { margin: 0; font-size: 16px; }
+.post-labels ul { padding-left: 20px; line-height: 1.8; font-size: 14px; font-weight: 600; }
+.post-labels p { font-size: 13px; line-height: 1.7; color: var(--muted); }
 .exact-score { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
 .exact-score p { margin: 8px 0; }
 .match-note { font-size: 11px; color: var(--muted); margin: 8px 0 0; }

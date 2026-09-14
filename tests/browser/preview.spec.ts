@@ -12,8 +12,13 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await expect(page.getByRole('heading', { name: 'reuters.com', exact: true })).toBeVisible();
   await expect(page.getByText('1.000', { exact: true })).toBeVisible();
   for (const category of ['Low', 'Medium', 'High']) {
-    await expect(page.getByText(`${category} quality news source`, { exact: true })).toBeVisible();
+    await expect(page.getByRole('article').getByText(`${category} quality news source`, { exact: true })).toBeVisible();
   }
+  const labels = page.getByRole('region', { name: 'Proposed post labels', exact: true });
+  await expect(labels.getByRole('listitem')).toHaveText([
+    'Low quality news source', 'Medium quality news source', 'High quality news source',
+  ]);
+  await expect(labels.getByText(/Nothing has been published to Bluesky/)).toBeVisible();
   await expect(page.getByText(/Provisional project policy/).first()).toBeVisible();
   const medium = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'example.org/news', exact: true }) });
   await medium.getByText('Exact score', { exact: true }).click();
@@ -36,5 +41,6 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await page.getByLabel('Bluesky post URL').fill('https://bsky.app/profile/reader.bsky.social/post/empty');
   await page.getByRole('button', { name: 'Inspect sources' }).click();
   await expect(page.getByText('No source links found in the inspected posts.')).toBeVisible();
+  await expect(labels.getByText('No labels proposed: no rated sources were found.')).toBeVisible();
   expect(errors).toEqual([]);
 });

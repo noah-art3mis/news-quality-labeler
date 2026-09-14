@@ -6,6 +6,8 @@ Paste a public Bluesky post URL into a local webpage to inspect its linked sourc
 
 This is the local preview for a planned Bluesky labeler. It does not publish labels or require a Bluesky account. The local categories are **Low quality news source** (below 0.40), **Medium quality news source** (0.40 to below 0.70), and **High quality news source** (0.70 and above). They use the unrounded score; unmatched and unresolved links remain unclassified.
 
+The **Proposed post labels** section shows each distinct category once for the submitted post, including categories from one quoted post. A post can receive both low and high labels when it shares sources from both categories; scores are never averaged. Individual source results retain the supporting links and their origins. See [the post-label rules](docs/post-label-preview.md).
+
 The [threshold analysis](docs/threshold-analysis.md) compares candidate cutoffs against the pinned dataset, with a distribution chart, recognizable examples, and methodological limits. The local preview uses the provisional project policy `source-quality-v1`, defined in [quality-policy.ts](src/labeling/quality-policy.ts). These cutoffs are not validated by the paper.
 
 ## Run locally
