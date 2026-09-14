@@ -1,6 +1,6 @@
 # News Quality
 
-News Quality describes the quality of sources linked from Bluesky posts using published domain ratings.
+News Quality describes the quality of sources linked from Bluesky posts using published domain and section ratings.
 
 ## Language
 
@@ -9,7 +9,7 @@ A private assessment showing source ratings and any proposed labels before publi
 _Avoid_: Published label
 
 **Source rating**:
-The dataset's numerical quality score for a domain. It describes the source, not the accuracy of an individual article.
+The dataset's numerical quality score for a domain or a section of a site. It describes the source, not the accuracy of an individual article.
 _Avoid_: Truth score, article rating
 
 **Unmatched domain**:
@@ -20,9 +20,13 @@ _Avoid_: Low-quality source
 One of “Low quality news source”, “Medium quality news source”, or “High quality news source”, assigned from a source rating using agreed thresholds.
 _Avoid_: Article verdict
 
-**Matched source domain**:
-The domain entry in the dataset that supplies a linked hostname's source rating. It may be an exact match or a parent domain permitted by the matching policy.
+**Matched source entry**:
+The domain or section entry in the dataset that supplies a link's source rating. It may be an exact section, an exact hostname, or a parent domain permitted by the matching policy.
 _Avoid_: Linked hostname when referring to the dataset entry
+
+**Section rating**:
+A source rating scoped to a path within a site, such as `example.com/news`. It does not describe the entire site.
+_Avoid_: Site-wide rating
 
 **Unresolved destination**:
 A linked URL whose destination source could not be established. This does not establish whether that source has a rating in the dataset.

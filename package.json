@@ -1,0 +1,28 @@
+{
+  "name": "news-quality-labeler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/main.ts",
+    "test": "node --test --test-isolation=none --test-reporter=dot tests/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "test:browser": "playwright test --reporter=line",
+    "ratings:fetch": "node tools/ratings.ts fetch",
+    "ratings:check": "node tools/ratings.ts check",
+    "ratings:adopt": "node tools/ratings.ts adopt"
+  },
+  "dependencies": {
+    "csv-parse": "^7.0.2",
+    "ipaddr.js": "^2.5.0",
+    "tldts": "^7.4.13"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.5.1",
+    "typescript": "^7.0.2"
+  }
+}

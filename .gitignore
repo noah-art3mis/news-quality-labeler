@@ -6,6 +6,9 @@
 # Dependencies and build output
 node_modules/
 dist/
+.cache/
+test-results/
+playwright-report/
 
 # Local labeler state
 *.db
