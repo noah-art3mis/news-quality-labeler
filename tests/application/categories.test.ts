@@ -15,7 +15,7 @@ test('classifies full-precision ratings at both cutoffs and keeps missing result
   const ratings = parseRatings('domain,pc1\n' + cases.map(([domain, score]) => `${domain},${score}`).join('\n'), 'a'.repeat(40));
   const preview = createPreview({ ratings,
     async getPost() {
-      return { uri: 'at://did:plc:a/app.bsky.feed.post/example', author: 'author.test', text: 'Sources', quote: null,
+      return { cid: 'bafyreifixture', uri: 'at://did:plc:a/app.bsky.feed.post/example', author: 'author.test', text: 'Sources', quote: null,
         links: [...cases.map(([domain]) => `https://${domain}/article`), 'https://unknown.example/a', 'https://bit.ly/broken'] };
     },
     async resolveDestination() { throw new Error('Unresolved'); },

@@ -5,7 +5,7 @@ import { shorteners } from '../labeling/host-policy.ts';
 import { localQualityPolicy } from '../labeling/quality-policy.ts';
 import type { AssessedLink, Post, PostReference, PostSummary, Preview, QuoteInspection, RatingSnapshot } from '../labeling/model.ts';
 
-const summarize = ({ uri, author, text }: Post): PostSummary => ({ uri, author, text });
+const summarize = ({ uri, cid, author, text }: Post): PostSummary => ({ uri, cid, author, text });
 
 export function createPreview(deps: {
   ratings: RatingSnapshot;

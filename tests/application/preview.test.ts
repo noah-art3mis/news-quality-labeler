@@ -13,7 +13,7 @@ function scenario(links: string[], options: { csv?: string } = {}) {
     ratings: parseRatings(options.csv ?? csv, 'a'.repeat(40)),
     async getPost(ref) {
       requests.push(ref);
-      return { uri: 'at://did:plc:author/app.bsky.feed.post/3abc', text: 'A post',
+      return { cid: 'bafyreifixture', uri: 'at://did:plc:author/app.bsky.feed.post/3abc', text: 'A post',
         author: 'reporter.test', links, quote: null };
     },
     async resolveDestination(url) {

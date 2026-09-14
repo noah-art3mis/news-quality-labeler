@@ -4,7 +4,7 @@ import { createBlueskyReader, translatePost } from '../../src/adapters/bluesky.t
 
 const uri = 'at://did:plc:reporter/app.bsky.feed.post/3abc';
 function fixture(embed: unknown) {
-  return { uri, author: { handle: 'reporter.test' }, record: {
+  return { uri, cid: 'bafyreifixture', author: { handle: 'reporter.test' }, record: {
     $type: 'app.bsky.feed.post', text: 'Read this',
     facets: [{ features: [{ $type: 'app.bsky.richtext.facet#link', uri: 'https://example.com/a' },
       { $type: 'app.bsky.richtext.facet#mention', did: 'did:plc:someone' }] }], embed,
@@ -67,4 +67,11 @@ test('reports missing posts and upstream failures clearly', async () => {
   await assert.rejects(missing({ actor: 'did:plc:reporter', rkey: '3abc' }), /unavailable publicly/);
   const offline = createBlueskyReader(async () => { throw new Error('fetch failed'); });
   await assert.rejects(offline({ actor: 'did:plc:reporter', rkey: '3abc' }), /reach Bluesky/);
+});
+
+test('preserves the post revision needed for version-specific publication', () => {
+  const value = { ...fixture(null), cid: 'bafyreipostrevision' };
+  assert.equal(translatePost(value).cid, value.cid);
+  const { cid, ...missing } = value;
+  assert.throws(() => translatePost(missing), /unreadable/);
 });

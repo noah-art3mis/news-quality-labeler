@@ -6,7 +6,7 @@ import type { Post } from '../../src/labeling/model.ts';
 
 const ratings = parseRatings('domain,pc1\nhigh.example,0.9\nother-high.example,0.8\nmedium.example,0.5\nlow.example,0.2\n', 'a'.repeat(40));
 const post = (links: string[], quote: Post['quote'] = null): Post => ({
-  uri: 'at://did:plc:reader/app.bsky.feed.post/root', author: 'reader.test', text: 'Reporting', links, quote,
+  cid: 'bafyreifixture', uri: 'at://did:plc:reader/app.bsky.feed.post/root', author: 'reader.test', text: 'Reporting', links, quote,
 });
 const reference = { status: 'referenced', reference: { actor: 'did:plc:quoted', rkey: 'quoted' } } as const;
 
