@@ -3,7 +3,7 @@ import { createPreview } from '../../src/application/preview.ts';
 import { parseRatings } from '../../src/ratings/snapshot.ts';
 
 const preview = createPreview({
-  ratings: parseRatings('domain,pc1\nreuters.com,1\nexample.org/news,0.65\n', 'a'.repeat(40)),
+  ratings: parseRatings('domain,pc1\nreuters.com,1\nexample.org/news,0.65\nlow.example,0.2\n', 'a'.repeat(40)),
   async getPost(reference) {
     if (reference.rkey === 'missing') throw new Error('This post is unavailable publicly.');
     if (reference.rkey === 'quoted') return {
@@ -15,7 +15,7 @@ const preview = createPreview({
       text: 'Two perspectives on the story. Read the reporting and compare the sources.',
       quote: reference.rkey === 'empty' ? null : { status: 'referenced', reference: { actor: 'did:plc:quote', rkey: 'quoted' } },
       links: reference.rkey === 'empty' ? [] : ['https://www.reuters.com/world/story',
-        'https://example.org/news/story', 'https://unrated.example/story', 'https://bit.ly/unresolved'],
+        'https://example.org/news/story', 'https://low.example/story', 'https://unrated.example/story', 'https://bit.ly/unresolved'],
     };
   },
   async resolveDestination() { throw new Error('Timed out'); },

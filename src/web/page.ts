@@ -1,3 +1,4 @@
+import { categoryNames, localQualityPolicy } from '../labeling/quality-policy.ts';
 import { webUrl } from '../labeling/model.ts';
 import type { Preview, SourceAssessment } from '../labeling/model.ts';
 
@@ -7,11 +8,13 @@ const escape = (value: string | number) => String(value).replace(/[&<>"']/g,
 function sourceResult(source: SourceAssessment): string {
   const rated = source.status === 'rated';
   const title = rated ? 'Source rating' : source.status === 'unmatched' ? 'Not in dataset' : 'Could not resolve destination';
-  const score = rated && source.score !== null ? `<div class="rating"><span class="score">${source.score.toFixed(3)}</span><span class="out-of"> / 1</span>
+  const score = rated ? `<div class="rating"><span class="score">${source.score.toFixed(3)}</span><span class="out-of"> / 1</span>
     <meter min="0" max="1" value="${source.score}" aria-label="Source rating for ${escape(source.source)}">${source.score}</meter></div>` : '';
   return `<article class="source">
     <div class="source-heading"><div><p class="eyebrow">${title}</p><h3>${escape(source.source)}</h3></div>${score}</div>
-    ${rated ? '<p class="match-note">Matched dataset entry</p>' : ''}
+    ${rated ? `<p class="category">${categoryNames[source.category]}</p>
+    <details class="exact-score"><summary>Exact score</summary><p>${source.score}</p></details>
+    <p class="match-note">Matched dataset entry</p>` : ''}
     <ul class="links">${source.links.map(link => {
       const url = webUrl(link.original);
       const label = escape(link.original);
@@ -27,6 +30,7 @@ function sourceResult(source: SourceAssessment): string {
 function assessment(result: Preview): string {
   return `<section class="results" aria-labelledby="results-heading">
     <div class="section-heading"><h2 id="results-heading">Source assessment</h2><span>${result.sources.length} source results</span></div>
+    <p class="notice">${policyExplanation(result.policy)}</p>
     <blockquote><p>${escape(result.post.text)}</p><footer>@${escape(result.post.author)}</footer></blockquote>
     ${result.quote.status === 'unavailable' ? '<p class="notice">The quoted post could not be inspected. It may be unavailable publicly.</p>' : ''}
     ${result.quote.status === 'inspected' ? `<div class="quoted-post"><p class="eyebrow">Quoted post</p>
@@ -36,6 +40,10 @@ function assessment(result: Preview): string {
       : '<p class="empty-result">No source links found in the inspected posts.</p>'}
     <p class="scope-note">Ratings describe the linked sources. They do not assess this post’s accuracy or the author’s views.</p>
   </section>`;
+}
+
+function policyExplanation(policy: typeof localQualityPolicy): string {
+  return `${policy.provisional ? 'Provisional project policy' : 'Project policy'} (${escape(policy.id)}): low below ${policy.lowBelow.toFixed(2)}, medium from ${policy.lowBelow.toFixed(2)} to below ${policy.highFrom.toFixed(2)}, high from ${policy.highFrom.toFixed(2)}. Categories use the unrounded score. These cutoffs are not validated by the paper.`;
 }
 
 export function renderPage(options: { result?: Preview; error?: string; input?: string } = {}): string {
@@ -57,7 +65,7 @@ ${options.result ? assessment(options.result) : '<div class="initial-note"><span
 <p>Lin, H., Lasser, J., Lewandowsky, S., Cole, R., Gully, A., Rand, D. G., &amp; Pennycook, G. (2023). <a href="https://doi.org/10.1093/pnasnexus/pgad286" target="_blank" rel="noreferrer">High level of correspondence across different news domain quality rating sets</a>. <cite>PNAS Nexus</cite>, 2(9).</p>
 <p><a href="https://github.com/hauselin/domain-quality-ratings" target="_blank" rel="noreferrer">Dataset repository</a>${options.result ? ` · <a href="${escape(options.result.snapshot.url)}" target="_blank" rel="noreferrer">Snapshot <code>${escape(options.result.snapshot.version)}</code></a>` : ''}</p>
 <p>Exact section and hostname matches take priority. Publisher subdomains may inherit a parent rating within public-suffix boundaries. Known shortened links are expanded; other links are assessed by their URL. One level of quoted posts is inspected, with those sources identified separately.</p>
-<p>This preview does not publish labels to Bluesky. Low, medium, and high quality news source labels are planned for a later stage.</p>
+<p>This preview does not publish labels to Bluesky. ${policyExplanation(options.result?.policy ?? localQualityPolicy)}</p>
 </div></details></main>
 <footer class="page-footer"><span>Source context, one post at a time.</span><a href="https://github.com/noah-art3mis/news-quality-labeler" target="_blank" rel="noreferrer">Project on GitHub ↗</a></footer></body></html>`;
 }

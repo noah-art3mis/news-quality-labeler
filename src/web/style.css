@@ -56,6 +56,9 @@ meter { display: block; width: 100%; height: 7px; margin-top: 10px; }
 meter::-webkit-meter-bar { background: #e3eae6; border: 0; }
 meter::-webkit-meter-optimum-value { background: #70998c; }
 meter::-moz-meter-bar { background: #70998c; }
+.category { font-size: 14px; font-weight: 600; margin: 16px 0 10px; }
+.exact-score { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.exact-score p { margin: 8px 0; }
 .match-note { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 .links { list-style: none; padding: 0; margin: 19px 0 0; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
 .links li + li { margin-top: 9px; }

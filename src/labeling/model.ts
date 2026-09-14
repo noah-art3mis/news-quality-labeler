@@ -1,3 +1,5 @@
+import type { QualityCategory, QualityPolicy } from './quality-policy.ts';
+
 export type PostReference = { actor: string; rkey: string };
 export type QuotedPost = { status: 'referenced'; reference: PostReference } | { status: 'unavailable' } | null;
 export type Post = {
@@ -12,11 +14,10 @@ export type QuoteInspection = { status: 'none' | 'unavailable' }
   | { status: 'inspected'; post: PostSummary; hasFurtherQuote: boolean };
 export type AssessedLink = { original: string; destination: string | null; origin: 'direct' | 'quote' };
 export type SourceAssessment = {
-  status: 'rated' | 'unmatched' | 'unresolved';
   source: string;
-  score: number | null;
   links: AssessedLink[];
-};
+} & ({ status: 'rated'; score: number; category: QualityCategory }
+  | { status: 'unmatched' | 'unresolved'; score: null; category: null });
 export type RatingSnapshot = {
   version: string;
   ratings: ReadonlyMap<string, number>;
@@ -25,6 +26,7 @@ export type Preview = {
   post: PostSummary;
   quote: QuoteInspection;
   snapshot: { version: string; url: string };
+  policy: QualityPolicy;
   sources: SourceAssessment[];
 };
 

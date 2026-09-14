@@ -8,9 +8,16 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await page.getByLabel('Bluesky post URL').fill('https://bsky.app/profile/reader.bsky.social/post/example');
   await page.getByRole('button', { name: 'Inspect sources' }).click();
   await expect(page.getByRole('heading', { name: 'Source assessment' })).toBeVisible();
-  await expect(page.getByRole('article')).toHaveCount(4);
+  await expect(page.getByRole('article')).toHaveCount(5);
   await expect(page.getByRole('heading', { name: 'reuters.com', exact: true })).toBeVisible();
   await expect(page.getByText('1.000', { exact: true })).toBeVisible();
+  for (const category of ['Low', 'Medium', 'High']) {
+    await expect(page.getByText(`${category} quality news source`, { exact: true })).toBeVisible();
+  }
+  await expect(page.getByText(/Provisional project policy/).first()).toBeVisible();
+  const medium = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'example.org/news', exact: true }) });
+  await medium.getByText('Exact score', { exact: true }).click();
+  await expect(medium.getByRole('paragraph').filter({ hasText: /^0\.65$/ })).toBeVisible();
   await expect(page.getByText('Not in dataset', { exact: true })).toBeVisible();
   await expect(page.getByText('Could not resolve destination', { exact: true })).toBeVisible();
   await expect(page.getByText('Source from quoted post', { exact: true })).toBeVisible();
