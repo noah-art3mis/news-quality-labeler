@@ -3,13 +3,14 @@ import type { QualityCategory, QualityPolicy } from './quality-policy.ts';
 export type PostReference = { actor: string; rkey: string };
 export type QuotedPost = { status: 'referenced'; reference: PostReference } | { status: 'unavailable' } | null;
 export type Post = {
+  cid: string;
   uri: string;
   author: string;
   text: string;
   links: string[];
   quote: QuotedPost;
 };
-export type PostSummary = Pick<Post, 'uri' | 'author' | 'text'>;
+export type PostSummary = Pick<Post, 'uri' | 'cid' | 'author' | 'text'>;
 export type QuoteInspection = { status: 'none' | 'unavailable' }
   | { status: 'inspected'; post: PostSummary; hasFurtherQuote: boolean };
 export type AssessedLink = { original: string; destination: string | null; origin: 'direct' | 'quote' };

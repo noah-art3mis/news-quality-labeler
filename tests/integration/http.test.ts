@@ -9,7 +9,7 @@ import { parseRatings } from '../../src/ratings/snapshot.ts';
 test('serves a private, escaped assessment with citations and rejects cross-origin or oversized submissions', async t => {
   const preview = createPreview({
     ratings: parseRatings('domain,pc1\nexample.com,0.7\n', 'a'.repeat(40)),
-    getPost: async () => ({ uri: 'at://did:plc:a/app.bsky.feed.post/b', author: 'author.test',
+    getPost: async () => ({ cid: 'bafyreifixture', uri: 'at://did:plc:a/app.bsky.feed.post/b', author: 'author.test',
       text: '<script>alert("unsafe")</script>', links: ['https://example.com/a'], quote: { status: 'unavailable' } }),
     resolveDestination: async url => url,
   });
@@ -45,4 +45,37 @@ test('serves a private, escaped assessment with citations and rejects cross-orig
   const oversized = await fetch(`${origin}/assess`, { method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'x'.repeat(9000) });
   assert.equal(oversized.status, 413);
+});
+
+test('publication controls require same-origin requests and a server token, and reject forged reviews', async t => {
+  const { createPublisher } = await import('../../src/application/publication.ts');
+  const { openPublicationStore } = await import('../../src/adapters/publication-store.ts');
+  const store = openPublicationStore(':memory:', 'test'); t.after(() => store.close());
+  const preview = createPreview({ ratings: parseRatings('domain,pc1\nexample.com,0.9', 'a'.repeat(40)),
+    getPost: async () => ({ uri: 'at://did:plc:reader/app.bsky.feed.post/post', cid: 'bafyreifixture',
+      author: 'reader.test', text: 'Article', links: ['https://example.com/a'], quote: null }),
+    resolveDestination: async url => url });
+  const sent: unknown[] = [];
+  const publisher = createPublisher({ preview, store, emit: async event => { sent.push(event); } });
+  const server = createPreviewServer(preview, publisher);
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  t.after(() => new Promise<void>((resolve, reject) => server.close(e => e ? reject(e) : resolve())));
+  const origin = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+  const response = await fetch(origin + '/assess', { method: 'POST', body: new URLSearchParams({ postUrl: 'https://bsky.app/profile/reader.test/post/post' }) });
+  const html = await response.text();
+  const token = /name="csrf" value="([^"]+)"/.exec(html)?.[1];
+  const id = /name="reviewId" value="([^"]+)"/.exec(html)?.[1];
+  assert.ok(token && id, 'server should render its reviewed proposal and CSRF token');
+  const body = new URLSearchParams({ csrf: token, reviewId: id });
+  assert.equal((await fetch(origin + '/publish', { method: 'POST', body })).status, 403);
+  assert.equal((await fetch(origin + '/publish', { method: 'POST', body, headers: { origin: 'https://evil.test' } })).status, 403);
+  assert.equal((await fetch(origin + '/publish', { method: 'POST', body: new URLSearchParams({ reviewId: id }), headers: { origin } })).status, 403);
+  assert.equal(sent.length, 0);
+  const forged = await fetch(origin + '/publish', { method: 'POST', body: new URLSearchParams({ csrf: token, reviewId: 'forged' }), headers: { origin } });
+  assert.equal(forged.status, 400);
+  assert.equal(sent.length, 0);
+  const published = await fetch(origin + '/publish', { method: 'POST', body, headers: { origin } });
+  assert.equal(published.status, 200);
+  assert.equal(sent.length, 1);
+  assert.match(await published.text(), /Published to labeler service/);
 });

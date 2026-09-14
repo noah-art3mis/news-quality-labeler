@@ -87,3 +87,8 @@ code { font-size: 11px; }
   .section-heading { flex-wrap: wrap; gap: 8px; }
   .page-footer { flex-direction: column; gap: 10px; }
 }
+
+.publication { border-top: 1px solid var(--line); padding: 24px 0; }
+.publication-entry { padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.publication-entry pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; }
+.publication form { margin: 16px 0; padding: 0; }

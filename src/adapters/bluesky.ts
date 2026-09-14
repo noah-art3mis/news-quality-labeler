@@ -23,7 +23,7 @@ export function translatePost(value: unknown): Post {
   const view = object(value);
   const record = object(view.record);
   const author = object(view.author);
-  if (typeof view.uri !== 'string' || typeof record.text !== 'string' || typeof author.handle !== 'string') {
+  if (typeof view.cid !== 'string' || !view.cid || typeof view.uri !== 'string' || typeof record.text !== 'string' || typeof author.handle !== 'string') {
     throw new Error('Bluesky returned an unreadable post.');
   }
   const links: string[] = [];
@@ -40,7 +40,7 @@ export function translatePost(value: unknown): Post {
     const external = object(media.external);
     if (typeof external.uri === 'string') links.push(external.uri);
   }
-  return { uri: view.uri, text: record.text, author: author.handle, links, quote: quotedPost(embed, object(view.embed)) };
+  return { uri: view.uri, cid: view.cid, text: record.text, author: author.handle, links, quote: quotedPost(embed, object(view.embed)) };
 }
 
 export async function fetchJson(url: string): Promise<unknown> {

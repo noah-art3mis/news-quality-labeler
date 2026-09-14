@@ -8,12 +8,12 @@ Keep the existing category policy and post-label rules: one label per distinct c
 
 ## Design work
 
-Publication introduces durable state beyond the current preview's rating cache. Preserve the evidence and policy behind a publication, distinguish a local proposal from a published label set, and make retries and retractions recoverable. Choose storage and delivery boundaries after inspecting the publisher library's actual transaction and retry behavior.
+Publication introduces durable state beyond the current preview's rating cache. Preserve the evidence and policy behind a publication, distinguish a local proposal from a published label set, and make retries and retractions recoverable. A durable operation records the intended label changes before delivery. The adapter recognizes already saved events when recovering from a crash before acknowledgement. Decisions for a post are serialized, and an unfinished operation must be retried before a new decision.
 
-Evaluate `@skyware/labeler` as the protocol adapter. Its documented service signs and stores labels, exposes the labeler endpoints, and supports retraction through negation. Keep classification and publication decisions independent of this adapter. See the [upstream setup guide](https://skyware.js.org/guides/labeler/introduction/getting-started/) and the [AT Protocol label specification](https://atproto.com/specs/label).
+Use `@skyware/labeler` as the protocol adapter. Its documented service signs and stores labels, exposes the labeler endpoints, and supports retraction through negation. Keep classification and publication decisions independent of this adapter. See the [upstream setup guide](https://skyware.js.org/guides/labeler/introduction/getting-started/) and the [AT Protocol label specification](https://atproto.com/specs/label).
 
-Public operation requires a labeler identity and signing key, declared labels, and a reachable HTTPS service. Account setup, hosting, and live publication have not been performed.
+Public operation requires a labeler identity and signing key, declared labels, and a reachable HTTPS service. See [publisher-setup.md](publisher-setup.md) for configuration and public verification. Account setup, hosting, and live publication have not been performed.
 
-## Open product decision
+## Subscriber display
 
-Choose the subscriber-facing behavior of the three categories: informational labels with no content blurring or hiding, or stronger warning/filter defaults. Recommended starting behavior is informational for all categories, since they describe sources rather than individual article verdicts.
+All three categories use informational severity, no blurring, and no default hiding. The protocol default preference is `warn`, which makes an informational label visible; subscribers control their own preferences. See `data/label-definitions.json` for the declarations.

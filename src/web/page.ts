@@ -1,9 +1,9 @@
+import { escape } from './html.ts';
+import { renderPublication } from './publication.ts';
+import type { PublicationPage } from './publication.ts';
 import { categoryNames, localQualityPolicy } from '../labeling/quality-policy.ts';
 import { webUrl } from '../labeling/model.ts';
 import type { Preview, SourceAssessment } from '../labeling/model.ts';
-
-const escape = (value: string | number) => String(value).replace(/[&<>"']/g,
-  char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 
 function sourceResult(source: SourceAssessment): string {
   const rated = source.status === 'rated';
@@ -36,7 +36,7 @@ function assessment(result: Preview): string {
       <h3 id="post-labels-heading">Proposed post labels</h3>
       ${result.postLabels.length ? `<ul>${result.postLabels.map(category => `<li>${categoryNames[category]}</li>`).join('')}</ul>`
         : '<p>No labels proposed: no rated sources were found.</p>'}
-      <p>For the submitted post, including sources from one quoted post. Each category appears once; scores are not combined. Nothing has been published to Bluesky.</p>
+      <p>For the submitted post, including sources from one quoted post. Each category appears once; scores are not combined. Inspecting a post does not publish these labels.</p>
     </section>
     ${result.quote.status === 'unavailable' ? '<p class="notice">The quoted post could not be inspected. It may be unavailable publicly.</p>' : ''}
     ${result.quote.status === 'inspected' ? `<div class="quoted-post"><p class="eyebrow">Quoted post</p>
@@ -52,7 +52,7 @@ function policyExplanation(policy: typeof localQualityPolicy): string {
   return `${policy.provisional ? 'Provisional project policy' : 'Project policy'} (${escape(policy.id)}): low below ${policy.lowBelow.toFixed(2)}, medium from ${policy.lowBelow.toFixed(2)} to below ${policy.highFrom.toFixed(2)}, high from ${policy.highFrom.toFixed(2)}. Categories use the unrounded score. These cutoffs are not validated by the paper.`;
 }
 
-export function renderPage(options: { result?: Preview; error?: string; input?: string } = {}): string {
+export function renderPage(options: { result?: Preview; error?: string; input?: string; publication?: PublicationPage } = {}): string {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>News Quality · Source preview</title><link rel="stylesheet" href="/style.css"><script src="/form.js" defer></script></head>
@@ -62,16 +62,17 @@ export function renderPage(options: { result?: Preview; error?: string; input?: 
 <form action="/assess" method="post"><label for="post-url">Bluesky post URL</label><div class="input-row">
 <input id="post-url" name="postUrl" type="url" required maxlength="2048" autocomplete="off" placeholder="https://bsky.app/profile/…/post/…" value="${escape(options.input ?? '')}" aria-describedby="form-hint${options.error ? ' form-error' : ''}">
 <button type="submit">Inspect sources <span aria-hidden="true">↗</span></button></div>
-<p id="form-hint" class="hint">Public posts only. No login. No saved assessment history.</p>
+<p id="form-hint" class="hint">${options.publication ? 'Publisher mode. Review before publishing. Publication decisions are saved locally.' : 'Public posts only. No login. No saved assessment history.'}</p>
 <p id="loading" class="hint" role="status" hidden>Inspecting sources… Shortened links may take a moment.</p>
 ${options.error ? `<p id="form-error" class="error" role="alert">${escape(options.error)}</p>` : ''}</form>
 ${options.result ? assessment(options.result) : '<div class="initial-note"><span class="rule-number">01 — 02</span><p>Paste a post. See each source’s rating.<br>Unknown sources remain unrated.</p></div>'}
+${options.publication ? renderPublication(options.publication) : ''}
 <details class="about"><summary>About these ratings</summary><div class="about-content">
 <p>The dataset’s <code>pc1</code> score ranges from 0 (lowest quality) to 1 (highest quality). It combines existing source-rating datasets using imputation and principal component analysis. It is not a probability that an article is true.</p>
 <p>Lin, H., Lasser, J., Lewandowsky, S., Cole, R., Gully, A., Rand, D. G., &amp; Pennycook, G. (2023). <a href="https://doi.org/10.1093/pnasnexus/pgad286" target="_blank" rel="noreferrer">High level of correspondence across different news domain quality rating sets</a>. <cite>PNAS Nexus</cite>, 2(9).</p>
 <p><a href="https://github.com/hauselin/domain-quality-ratings" target="_blank" rel="noreferrer">Dataset repository</a>${options.result ? ` · <a href="${escape(options.result.snapshot.url)}" target="_blank" rel="noreferrer">Snapshot <code>${escape(options.result.snapshot.version)}</code></a>` : ''}</p>
 <p>Exact section and hostname matches take priority. Publisher subdomains may inherit a parent rating within public-suffix boundaries. Known shortened links are expanded; other links are assessed by their URL. One level of quoted posts is inspected, with those sources identified separately.</p>
-<p>This preview does not publish labels to Bluesky. ${policyExplanation(options.result?.policy ?? localQualityPolicy)}</p>
+<p>${options.publication ? 'Publishing requires an explicit action in the operator page.' : 'This preview does not publish labels to Bluesky.'} ${policyExplanation(options.result?.policy ?? localQualityPolicy)}</p>
 </div></details></main>
 <footer class="page-footer"><span>Source context, one post at a time.</span><a href="https://github.com/noah-art3mis/news-quality-labeler" target="_blank" rel="noreferrer">Project on GitHub ↗</a></footer></body></html>`;
 }

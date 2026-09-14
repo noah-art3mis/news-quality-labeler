@@ -14,3 +14,6 @@ playwright-report/
 *.db
 *.db-shm
 *.db-wal
+
+# Durable publication state
+.state/

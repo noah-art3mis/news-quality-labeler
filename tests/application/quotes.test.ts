@@ -4,9 +4,9 @@ import { createPreview } from '../../src/application/preview.ts';
 import { parseRatings } from '../../src/ratings/snapshot.ts';
 
 const quoteRef = { actor: 'did:plc:quoted', rkey: 'quote' };
-const root = { uri: 'at://did:plc:root/app.bsky.feed.post/root', author: 'root.test', text: 'A quote',
+const root = { cid: 'bafyreifixture', uri: 'at://did:plc:root/app.bsky.feed.post/root', author: 'root.test', text: 'A quote',
   links: [] as string[], quote: { status: 'referenced' as const, reference: quoteRef } };
-const quoted = { uri: 'at://did:plc:quoted/app.bsky.feed.post/quote', author: 'quoted.test', text: 'An article',
+const quoted = { cid: 'bafyreifixture', uri: 'at://did:plc:quoted/app.bsky.feed.post/quote', author: 'quoted.test', text: 'An article',
   links: ['https://bit.ly/article'], quote: { status: 'referenced' as const,
     reference: { actor: 'did:plc:deeper', rkey: 'deeper' } } };
 const ratings = parseRatings('domain,pc1\nexample.com,0.8\n', 'a'.repeat(40));

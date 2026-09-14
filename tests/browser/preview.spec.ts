@@ -18,7 +18,7 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await expect(labels.getByRole('listitem')).toHaveText([
     'Low quality news source', 'Medium quality news source', 'High quality news source',
   ]);
-  await expect(labels.getByText(/Nothing has been published to Bluesky/)).toBeVisible();
+  await expect(labels.getByText(/Inspecting a post does not publish these labels/)).toBeVisible();
   await expect(page.getByText(/Provisional project policy/).first()).toBeVisible();
   const medium = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'example.org/news', exact: true }) });
   await medium.getByText('Exact score', { exact: true }).click();
@@ -34,6 +34,11 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('button', { name: 'Inspect sources' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('mobile.png'), fullPage: true });
+  await page.getByRole('button', { name: 'Publish labels', exact: true }).click();
+  await expect(page.getByText('Published to labeler service', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Retract labels', exact: true }).click();
+  await expect(page.getByText('Retraction accepted by labeler service', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Retract labels', exact: true })).toHaveCount(0);
   await page.getByLabel('Bluesky post URL').fill('https://bsky.app/profile/reader.bsky.social/post/missing');
   await page.getByRole('button', { name: 'Inspect sources' }).click();
   await expect(page.getByRole('alert')).toContainText('unavailable publicly');

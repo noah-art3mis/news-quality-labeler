@@ -20,7 +20,7 @@ The Bluesky adapter translates a post embed into a typed quote reference or an u
 
 `src/adapters/` translates Bluesky records, resolves redirects, stores rating snapshots, and serves HTTP. The redirect adapter validates public IP addresses and connects to the validated DNS answer, preventing a second DNS lookup from changing the destination. Each resolution has one deadline and a hop limit.
 
-`src/web/` renders escaped HTML and handles the form's busy state. `src/main.ts` wires the adapters and starts the loopback-only server. Post assessments are transient; the only durable data is the rating snapshot and its staged update metadata.
+`src/web/` renders escaped HTML and handles the form's busy state. `src/main.ts` wires the adapters and starts the loopback-only server. In preview mode, post assessments are transient; only the rating snapshot and its staged update metadata persist. Publisher mode also stores publication decisions, evidence, delivery progress, and signed labels.
 
 ## Snapshot ownership
 
@@ -30,4 +30,10 @@ The lock file is the source of truth for the selected dataset revision. Cached C
 
 Application scenarios substitute post retrieval and redirect resolution at their I/O seams while exercising real domain logic. Focused adapter tests verify foreign record formats, invalid data, private destination rejection, redirect limits, filesystem state, and HTTP isolation. One browser smoke test checks the visible assessment flow, attribution, mobile access to the form, and recovery from errors.
 
-The local preview has no publication state or outbox. Those belong to the later public labeler, where durable decisions, corrections, and recovery will need their own use cases and tests.
+## Manual publication
+
+`src/publication/model.ts` plans label additions and negations from a reviewed assessment and the previous decision. The plan carries the source evidence, post CID, and monotonically increasing event timestamps. `src/application/publication.ts` owns the review, publish, retry, and retract use cases; adapters own persistence and signing. Its store interface belongs to the publication model, not the storage adapter.
+
+The operator process is the single writer. It serializes mutations, compares the reviewed publication revision and freshly inspected evidence before publishing, and saves the entire operation before sending any event. Each event's progress is acknowledged separately. A crash between signing/storage and acknowledgement is handled by recognizing the same subject, value, and timestamp in the labeler's durable history. New decisions for a post wait until its pending operation is complete. Retraction uses saved evidence and does not depend on the post still being available.
+
+One SQLite database holds the application ledger and the protocol library's signed labels, avoiding separately backed-up histories. Private review tokens are temporary; publication evidence is durable. The private operator server checks Origin and a server-generated CSRF token for writes. The public protocol adapter refuses remote emission authorization; deployment exposes only its read endpoints. See [publisher-setup.md](publisher-setup.md).
