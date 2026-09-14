@@ -13,7 +13,8 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await expect(page.getByText('1.000', { exact: true })).toBeVisible();
   await expect(page.getByText('Not in dataset', { exact: true })).toBeVisible();
   await expect(page.getByText('Could not resolve destination', { exact: true })).toBeVisible();
-  await expect(page.getByText('Quoted post links have not been inspected.')).toBeVisible();
+  await expect(page.getByText('Source from quoted post', { exact: true })).toBeVisible();
+  await expect(page.getByText('Further quoted posts have not been inspected.')).toBeVisible();
   await page.getByText('About these ratings', { exact: true }).click();
   await expect(page.getByRole('link', { name: /High level of correspondence/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Snapshot aaaa/ })).toBeVisible();
@@ -27,6 +28,6 @@ test('inspect a post, read ratings and attribution, then recover from unavailabl
   await expect(page.getByRole('article')).toHaveCount(0);
   await page.getByLabel('Bluesky post URL').fill('https://bsky.app/profile/reader.bsky.social/post/empty');
   await page.getByRole('button', { name: 'Inspect sources' }).click();
-  await expect(page.getByText('No direct links found in this post.')).toBeVisible();
+  await expect(page.getByText('No source links found in the inspected posts.')).toBeVisible();
   expect(errors).toEqual([]);
 });

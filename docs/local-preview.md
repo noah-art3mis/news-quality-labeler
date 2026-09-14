@@ -10,7 +10,7 @@ For each linked domain, show its numerical source rating and the dataset version
 
 The planned category labels are “Low quality news source”, “Medium quality news source”, and “High quality news source”. These describe the linked source rather than the accuracy of the article or the views of the person sharing it.
 
-Inspect only links directly attached to the submitted post. Do not inspect links inside quoted posts in the first version. When a quoted post is present, show a visible note that it has not been inspected.
+Inspect links directly attached to the submitted post and the direct links of its quoted post, if publicly available. Follow only one quote level. Mark quoted links “Source from quoted post” and display the quoted post's text and author. If a quoted post is unavailable, retain the direct results and show a notice. If the quoted post quotes another post, note that further quotes have not been inspected.
 
 Match the most specific section rating on the same hostname first, respecting path-segment boundaries. Then match the hostname exactly. If no exact rating exists, allow inheritance from a rated parent domain for ordinary publisher subdomains. Keep independently operated subdomains on shared hosting distinct. Show the dataset entry that supplied each rating.
 
@@ -20,7 +20,7 @@ Use a pinned dataset version. Adopt updates only through an explicit update comm
 
 Place an “About these ratings” link beside the results. It opens the paper citation, the dataset repository, and the exact dataset version used. Explain that ratings describe source domains rather than individual articles. Keep both references in the README as well.
 
-For posts linking to multiple sources, show one result per matched source entry with its rating and associated links. An entry can contain a section path. Do not calculate a combined score for the post.
+For posts linking to multiple sources, show one result per matched source entry with its rating and associated links. An entry can contain a section path. Preserve whether each link came from the submitted or quoted post, even when they share the same source. Do not calculate a combined score for the post.
 
 Do not save assessment history in the first version. Show the current assessment and discard it when the user leaves. The pinned rating snapshot remains available independently of assessment history.
 

@@ -21,7 +21,7 @@ The server listens only on the local machine. It keeps no assessment history and
 
 ## How matching works
 
-- Extract links from the post's rich-text facets and its own website-card embed. Quoted posts are not inspected, and a note says so.
+- Extract links from the post's rich-text facets and its own website-card embed, plus the direct links in one quoted post. Mark those links **Source from quoted post**. Deeper quotes are not followed, and unavailable quotes leave direct results intact with a notice.
 - Prefer the longest section match on the same hostname, then an exact hostname rating, then an allowed parent-domain rating. `/news` matches `/news/article`, not `/newsletter`.
 - Keep independently operated subdomains distinct using public-suffix rules and supplemental publishing-platform boundaries.
 - Group links by their matched source entry. There is no combined post score.

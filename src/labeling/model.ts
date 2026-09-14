@@ -1,12 +1,16 @@
 export type PostReference = { actor: string; rkey: string };
+export type QuotedPost = { status: 'referenced'; reference: PostReference } | { status: 'unavailable' } | null;
 export type Post = {
   uri: string;
   author: string;
   text: string;
   links: string[];
-  hasQuote: boolean;
+  quote: QuotedPost;
 };
-export type AssessedLink = { original: string; destination: string | null };
+export type PostSummary = Pick<Post, 'uri' | 'author' | 'text'>;
+export type QuoteInspection = { status: 'none' | 'unavailable' }
+  | { status: 'inspected'; post: PostSummary; hasFurtherQuote: boolean };
+export type AssessedLink = { original: string; destination: string | null; origin: 'direct' | 'quote' };
 export type SourceAssessment = {
   status: 'rated' | 'unmatched' | 'unresolved';
   source: string;
@@ -18,7 +22,8 @@ export type RatingSnapshot = {
   ratings: ReadonlyMap<string, number>;
 };
 export type Preview = {
-  post: Omit<Post, 'links'>;
+  post: PostSummary;
+  quote: QuoteInspection;
   snapshot: { version: string; url: string };
   sources: SourceAssessment[];
 };

@@ -10,7 +10,9 @@ The matching order is section, exact hostname, then permitted parent hostname. S
 
 ## Imperative shell
 
-`src/application/preview.ts` exposes the assessment use case. It accepts a snapshot, a public-post reader, and a destination resolver. It retrieves a post, resolves supported shortened links, then calls the pure core. The webpage and tests call this same operation.
+`src/application/preview.ts` exposes the assessment use case. It accepts a snapshot, a public-post reader, and a destination resolver. It retrieves the submitted post and at most one quoted post, resolves supported shortened links, then calls the pure core. Each assessed link carries its direct or quoted origin. The webpage and tests call this same operation.
+
+The Bluesky adapter translates a post embed into a typed quote reference or an unavailable quote. Feed and other non-post embeds are not quote references. Blocked, missing, and detached quote views do not become fetchable references. The use case preserves direct results when a quote cannot be fetched and never recursively follows the quoted post's own quote.
 
 `src/adapters/` translates Bluesky records, resolves redirects, stores rating snapshots, and serves HTTP. The redirect adapter validates public IP addresses and connects to the validated DNS answer, preventing a second DNS lookup from changing the destination. Each resolution has one deadline and a hop limit.
 

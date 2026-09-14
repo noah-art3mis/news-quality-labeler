@@ -35,3 +35,11 @@ _Avoid_: Unmatched domain
 **Rating snapshot**:
 A fixed version of the domain ratings used for an assessment. Its identity makes the underlying ratings traceable across dataset updates.
 _Avoid_: Latest ratings
+
+**Quoted post**:
+A Bluesky post embedded by the submitted post. Its direct links can supply source ratings, but its own quoted posts are outside the preview's inspection scope.
+_Avoid_: Reply, linked article
+
+**Link origin**:
+Whether an assessed link belongs to the submitted post or its quoted post. This distinction is preserved even when both posts link to the same source.
+_Avoid_: Author endorsement

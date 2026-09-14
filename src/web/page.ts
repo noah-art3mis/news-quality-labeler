@@ -18,7 +18,8 @@ function sourceResult(source: SourceAssessment): string {
       const anchor = url ? `<a href="${escape(url.href)}" target="_blank" rel="noreferrer">${label}</a>` : `<span>${label}</span>`;
       const destination = link.destination && link.destination !== url?.href
         ? `<span class="destination">Destination: ${escape(link.destination)}</span>` : '';
-      return `<li>${anchor}${destination}</li>`;
+      const provenance = link.origin === 'quote' ? '<span class="destination">Source from quoted post</span>' : '';
+      return `<li>${provenance}${anchor}${destination}</li>`;
     }).join('')}</ul>
   </article>`;
 }
@@ -27,9 +28,12 @@ function assessment(result: Preview): string {
   return `<section class="results" aria-labelledby="results-heading">
     <div class="section-heading"><h2 id="results-heading">Source assessment</h2><span>${result.sources.length} source results</span></div>
     <blockquote><p>${escape(result.post.text)}</p><footer>@${escape(result.post.author)}</footer></blockquote>
-    ${result.post.hasQuote ? '<p class="notice">Quoted post links have not been inspected.</p>' : ''}
+    ${result.quote.status === 'unavailable' ? '<p class="notice">The quoted post could not be inspected. It may be unavailable publicly.</p>' : ''}
+    ${result.quote.status === 'inspected' ? `<div class="quoted-post"><p class="eyebrow">Quoted post</p>
+      <blockquote><p>${escape(result.quote.post.text)}</p><footer>@${escape(result.quote.post.author)}</footer></blockquote>
+      ${result.quote.hasFurtherQuote ? '<p class="notice">Further quoted posts have not been inspected.</p>' : ''}</div>` : ''}
     ${result.sources.length ? result.sources.map(sourceResult).join('')
-      : '<p class="empty-result">No direct links found in this post.</p>'}
+      : '<p class="empty-result">No source links found in the inspected posts.</p>'}
     <p class="scope-note">Ratings describe the linked sources. They do not assess this post’s accuracy or the author’s views.</p>
   </section>`;
 }
@@ -52,7 +56,7 @@ ${options.result ? assessment(options.result) : '<div class="initial-note"><span
 <p>The dataset’s <code>pc1</code> score ranges from 0 (lowest quality) to 1 (highest quality). It combines existing source-rating datasets using imputation and principal component analysis. It is not a probability that an article is true.</p>
 <p>Lin, H., Lasser, J., Lewandowsky, S., Cole, R., Gully, A., Rand, D. G., &amp; Pennycook, G. (2023). <a href="https://doi.org/10.1093/pnasnexus/pgad286" target="_blank" rel="noreferrer">High level of correspondence across different news domain quality rating sets</a>. <cite>PNAS Nexus</cite>, 2(9).</p>
 <p><a href="https://github.com/hauselin/domain-quality-ratings" target="_blank" rel="noreferrer">Dataset repository</a>${options.result ? ` · <a href="${escape(options.result.snapshot.url)}" target="_blank" rel="noreferrer">Snapshot <code>${escape(options.result.snapshot.version)}</code></a>` : ''}</p>
-<p>Exact section and hostname matches take priority. Publisher subdomains may inherit a parent rating within public-suffix boundaries. Known shortened links are expanded; other links are assessed by their URL. Quoted posts are excluded.</p>
+<p>Exact section and hostname matches take priority. Publisher subdomains may inherit a parent rating within public-suffix boundaries. Known shortened links are expanded; other links are assessed by their URL. One level of quoted posts is inspected, with those sources identified separately.</p>
 <p>This preview does not publish labels to Bluesky. Low, medium, and high quality news source labels are planned for a later stage.</p>
 </div></details></main>
 <footer class="page-footer"><span>Source context, one post at a time.</span><a href="https://github.com/noah-art3mis/news-quality-labeler" target="_blank" rel="noreferrer">Project on GitHub ↗</a></footer></body></html>`;

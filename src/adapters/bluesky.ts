@@ -1,8 +1,22 @@
-import type { Post, PostReference } from '../labeling/model.ts';
+import type { Post, PostReference, QuotedPost } from '../labeling/model.ts';
 
 type JsonObject = Record<string, unknown>;
 function object(value: unknown): JsonObject {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as JsonObject : {};
+}
+
+function quotedPost(embed: JsonObject, hydrated: JsonObject): QuotedPost {
+  const recordEmbed = embed.$type === 'app.bsky.embed.recordWithMedia' ? object(embed.record) : embed;
+  if (recordEmbed.$type !== 'app.bsky.embed.record') return null;
+  const uri = object(recordEmbed.record).uri;
+  const match = typeof uri === 'string'
+    ? /^at:\/\/(did:[a-z]+:[a-zA-Z0-9._:%-]+)\/app\.bsky\.feed\.post\/([a-zA-Z0-9_-]+)$/.exec(uri) : null;
+  if (!match) return null;
+  const view = hydrated.$type === 'app.bsky.embed.recordWithMedia#view'
+    ? object(object(hydrated.record).record) : object(hydrated.record);
+  if (['app.bsky.embed.record#viewBlocked', 'app.bsky.embed.record#viewDetached',
+    'app.bsky.embed.record#viewNotFound'].includes(String(view.$type))) return { status: 'unavailable' };
+  return { status: 'referenced', reference: { actor: match[1], rkey: match[2] } };
 }
 
 export function translatePost(value: unknown): Post {
@@ -21,13 +35,12 @@ export function translatePost(value: unknown): Post {
     }
   }
   const embed = object(record.embed);
-  const hasQuote = embed.$type === 'app.bsky.embed.record' || embed.$type === 'app.bsky.embed.recordWithMedia';
   const media = embed.$type === 'app.bsky.embed.recordWithMedia' ? object(embed.media) : embed;
   if (media.$type === 'app.bsky.embed.external') {
     const external = object(media.external);
     if (typeof external.uri === 'string') links.push(external.uri);
   }
-  return { uri: view.uri, text: record.text, author: author.handle, links, hasQuote };
+  return { uri: view.uri, text: record.text, author: author.handle, links, quote: quotedPost(embed, object(view.embed)) };
 }
 
 export async function fetchJson(url: string): Promise<unknown> {

@@ -10,7 +10,7 @@ test('serves a private, escaped assessment with citations and rejects cross-orig
   const preview = createPreview({
     ratings: parseRatings('domain,pc1\nexample.com,0.7\n', 'a'.repeat(40)),
     getPost: async () => ({ uri: 'at://did:plc:a/app.bsky.feed.post/b', author: 'author.test',
-      text: '<script>alert("unsafe")</script>', links: ['https://example.com/a'], hasQuote: true }),
+      text: '<script>alert("unsafe")</script>', links: ['https://example.com/a'], quote: { status: 'unavailable' } }),
     resolveDestination: async url => url,
   });
   const server = createPreviewServer(preview);
@@ -30,7 +30,7 @@ test('serves a private, escaped assessment with citations and rejects cross-orig
   assert.match(html, /0.700/);
   assert.match(html, /&lt;script&gt;/);
   assert.doesNotMatch(html, /<script>alert/);
-  assert.match(html, /Quoted post links have not been inspected/);
+  assert.match(html, /The quoted post could not be inspected/);
   assert.match(html, /10.1093\/pnasnexus\/pgad286/);
   assert.match(html, new RegExp('a'.repeat(40)));
   const foreign = await fetch(`${origin}/assess`, { method: 'POST', body, headers: { Origin: 'https://evil.org' } });

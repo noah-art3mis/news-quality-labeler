@@ -6,9 +6,14 @@ const preview = createPreview({
   ratings: parseRatings('domain,pc1\nreuters.com,1\nexample.org/news,0.65\n', 'a'.repeat(40)),
   async getPost(reference) {
     if (reference.rkey === 'missing') throw new Error('This post is unavailable publicly.');
+    if (reference.rkey === 'quoted') return {
+      uri: 'at://did:plc:quote/app.bsky.feed.post/quoted', author: 'quoted.bsky.social', text: 'Another report on the story.',
+      links: ['https://www.reuters.com/quoted'],
+      quote: { status: 'referenced', reference: { actor: 'did:plc:deeper', rkey: 'deeper' } },
+    };
     return { uri: 'at://did:plc:example/app.bsky.feed.post/example', author: 'reader.bsky.social',
       text: 'Two perspectives on the story. Read the reporting and compare the sources.',
-      hasQuote: true,
+      quote: reference.rkey === 'empty' ? null : { status: 'referenced', reference: { actor: 'did:plc:quote', rkey: 'quoted' } },
       links: reference.rkey === 'empty' ? [] : ['https://www.reuters.com/world/story',
         'https://example.org/news/story', 'https://unrated.example/story', 'https://bit.ly/unresolved'],
     };

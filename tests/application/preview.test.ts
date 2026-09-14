@@ -6,7 +6,7 @@ import { parseRatings } from '../../src/ratings/snapshot.ts';
 const postUrl = 'https://bsky.app/profile/reporter.test/post/3abc';
 const csv = 'domain,pc1\nexample.com,0.8\nnews.example.com,0.6\nother.org,0.2\nblogspot.com,0.9\nauthor.blogspot.com,0.4\n';
 
-function scenario(links: string[], options: { quote?: boolean; csv?: string } = {}) {
+function scenario(links: string[], options: { csv?: string } = {}) {
   const requests: unknown[] = [];
   const resolved: string[] = [];
   const preview = createPreview({
@@ -14,7 +14,7 @@ function scenario(links: string[], options: { quote?: boolean; csv?: string } = 
     async getPost(ref) {
       requests.push(ref);
       return { uri: 'at://did:plc:author/app.bsky.feed.post/3abc', text: 'A post',
-        author: 'reporter.test', links, hasQuote: options.quote ?? false };
+        author: 'reporter.test', links, quote: null };
     },
     async resolveDestination(url) {
       resolved.push(url);
@@ -69,10 +69,10 @@ test('distinguishes absent ratings from unresolved short links and unsafe URLs',
   assert.deepEqual(resolved, ['https://bit.ly/broken', 'https://bit.ly/story']);
 });
 
-test('preserves quote notice and handles posts with no direct links', async () => {
-  const { preview } = scenario([], { quote: true });
+test('handles posts with no links or quote', async () => {
+  const { preview } = scenario([]);
   const result = await preview(postUrl);
-  assert.equal(result.post.hasQuote, true);
+  assert.equal(result.quote.status, 'none');
   assert.deepEqual(result.sources, []);
 });
 
