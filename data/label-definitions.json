@@ -1,0 +1,44 @@
+[
+  {
+    "identifier": "low-quality-news-source",
+    "severity": "inform",
+    "blurs": "none",
+    "defaultSetting": "warn",
+    "adultOnly": false,
+    "locales": [
+      {
+        "lang": "en",
+        "name": "Low quality news source",
+        "description": "This post links to a source in our provisional low-quality category, directly or through one quoted post. This rates the source, not the article or author. Based on Lin et al. (2023); thresholds are project choices."
+      }
+    ]
+  },
+  {
+    "identifier": "medium-quality-news-source",
+    "severity": "inform",
+    "blurs": "none",
+    "defaultSetting": "warn",
+    "adultOnly": false,
+    "locales": [
+      {
+        "lang": "en",
+        "name": "Medium quality news source",
+        "description": "This post links to a source in our provisional medium-quality category, directly or through one quoted post. This rates the source, not the article or author. Based on Lin et al. (2023); thresholds are project choices."
+      }
+    ]
+  },
+  {
+    "identifier": "high-quality-news-source",
+    "severity": "inform",
+    "blurs": "none",
+    "defaultSetting": "warn",
+    "adultOnly": false,
+    "locales": [
+      {
+        "lang": "en",
+        "name": "High quality news source",
+        "description": "This post links to a source in our provisional high-quality category, directly or through one quoted post. This rates the source, not the article or author. Based on Lin et al. (2023); thresholds are project choices."
+      }
+    ]
+  }
+]
