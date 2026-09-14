@@ -28,6 +28,7 @@ export type Preview = {
   snapshot: { version: string; url: string };
   policy: QualityPolicy;
   sources: SourceAssessment[];
+  postLabels: QualityCategory[];
 };
 
 export function parsePostUrl(input: string): PostReference {

@@ -1,4 +1,5 @@
 import { assessLinks } from '../labeling/assess.ts';
+import { proposePostLabels } from '../labeling/post-labels.ts';
 import { parsePostUrl, webUrl } from '../labeling/model.ts';
 import { shorteners } from '../labeling/host-policy.ts';
 import { localQualityPolicy } from '../labeling/quality-policy.ts';
@@ -41,13 +42,15 @@ export function createPreview(deps: {
       destinations.set(original, destination);
       links.push({ original, destination, origin });
     }
+    const sources = assessLinks(links, deps.ratings, localQualityPolicy);
     return {
       post: summarize(post),
       quote,
       snapshot: { version: deps.ratings.version,
         url: `https://github.com/hauselin/domain-quality-ratings/tree/${deps.ratings.version}/data` },
       policy: localQualityPolicy,
-      sources: assessLinks(links, deps.ratings, localQualityPolicy),
+      sources,
+      postLabels: proposePostLabels(sources),
     };
   };
 }

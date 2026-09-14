@@ -32,6 +32,12 @@ function assessment(result: Preview): string {
     <div class="section-heading"><h2 id="results-heading">Source assessment</h2><span>${result.sources.length} source results</span></div>
     <p class="notice">${policyExplanation(result.policy)}</p>
     <blockquote><p>${escape(result.post.text)}</p><footer>@${escape(result.post.author)}</footer></blockquote>
+    <section class="post-labels" aria-labelledby="post-labels-heading">
+      <h3 id="post-labels-heading">Proposed post labels</h3>
+      ${result.postLabels.length ? `<ul>${result.postLabels.map(category => `<li>${categoryNames[category]}</li>`).join('')}</ul>`
+        : '<p>No labels proposed: no rated sources were found.</p>'}
+      <p>For the submitted post, including sources from one quoted post. Each category appears once; scores are not combined. Nothing has been published to Bluesky.</p>
+    </section>
     ${result.quote.status === 'unavailable' ? '<p class="notice">The quoted post could not be inspected. It may be unavailable publicly.</p>' : ''}
     ${result.quote.status === 'inspected' ? `<div class="quoted-post"><p class="eyebrow">Quoted post</p>
       <blockquote><p>${escape(result.quote.post.text)}</p><footer>@${escape(result.quote.post.author)}</footer></blockquote>
