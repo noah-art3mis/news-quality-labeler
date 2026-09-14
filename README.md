@@ -6,6 +6,8 @@ Paste a public Bluesky post URL into a local webpage to inspect its linked sourc
 
 This is the local preview for a planned Bluesky labeler. It does not publish labels or require a Bluesky account. The eventual label names are **Low quality news source**, **Medium quality news source**, and **High quality news source**; thresholds have not yet been selected.
 
+The [threshold proposal](docs/threshold-analysis.md) compares candidate cutoffs against the pinned dataset, with a distribution chart, recognizable examples, and methodological limits. It is a proposal for evaluation, not an active labeling policy.
+
 ## Run locally
 
 Requires Node.js 24 or newer and npm.

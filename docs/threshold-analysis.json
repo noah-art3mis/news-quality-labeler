@@ -1,0 +1,650 @@
+{
+  "version": "5671d57e545e48225ef2cbf559a6ab7f8f77a9de",
+  "totalEntries": 11520,
+  "sectionEntries": 46,
+  "weighting": "One vote per dataset entry; not weighted by Bluesky exposure or publisher.",
+  "quantiles": [
+    {
+      "p": 0,
+      "score": 0
+    },
+    {
+      "p": 0.05,
+      "score": 0.216512694557044
+    },
+    {
+      "p": 0.1,
+      "score": 0.246325520945605
+    },
+    {
+      "p": 0.25,
+      "score": 0.378630626551772
+    },
+    {
+      "p": 0.5,
+      "score": 0.5817907626948725
+    },
+    {
+      "p": 0.75,
+      "score": 0.6937746713611955
+    },
+    {
+      "p": 0.9,
+      "score": 0.8122733343481258
+    },
+    {
+      "p": 0.95,
+      "score": 0.861881719955617
+    },
+    {
+      "p": 1,
+      "score": 1
+    }
+  ],
+  "candidates": [
+    {
+      "name": "Earlier illustration",
+      "low": 0.3,
+      "high": 0.7,
+      "counts": {
+        "low": 1937,
+        "medium": 6943,
+        "high": 2640
+      },
+      "percent": {
+        "low": 16.81423611111111,
+        "medium": 60.26909722222222,
+        "high": 22.916666666666664
+      }
+    },
+    {
+      "name": "Proposed starting policy",
+      "low": 0.4,
+      "high": 0.7,
+      "counts": {
+        "low": 3155,
+        "medium": 5725,
+        "high": 2640
+      },
+      "percent": {
+        "low": 27.38715277777778,
+        "medium": 49.69618055555556,
+        "high": 22.916666666666664
+      }
+    },
+    {
+      "name": "Stricter high category",
+      "low": 0.4,
+      "high": 0.8,
+      "counts": {
+        "low": 3155,
+        "medium": 7101,
+        "high": 1264
+      },
+      "percent": {
+        "low": 27.38715277777778,
+        "medium": 61.64062500000001,
+        "high": 10.972222222222221
+      }
+    },
+    {
+      "name": "Wider low category",
+      "low": 0.5,
+      "high": 0.8,
+      "counts": {
+        "low": 4271,
+        "medium": 5985,
+        "high": 1264
+      },
+      "percent": {
+        "low": 37.07465277777778,
+        "medium": 51.953125,
+        "high": 10.972222222222221
+      }
+    }
+  ],
+  "examples": [
+    {
+      "source": "reuters.com",
+      "score": 1,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "apnews.com",
+      "score": 0.998049167729267,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "arstechnica.com",
+      "score": 0.946362498302995,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "npr.org",
+      "score": 0.930525246755544,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "theverge.com",
+      "score": 0.882320056922523,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "bbc.com",
+      "score": 0.881685504350007,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "nytimes.com",
+      "score": 0.858776290720608,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "propublica.org",
+      "score": 0.853234743040771,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "wired.com",
+      "score": 0.852038156276351,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "washingtonpost.com",
+      "score": 0.818780596798307,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "wsj.com",
+      "score": 0.804466118117895,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "elpais.com",
+      "score": 0.791230028033304,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "aljazeera.com",
+      "score": 0.779267503219657,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "theguardian.com",
+      "score": 0.74959222370997,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "bbc.co.uk",
+      "score": 0.718306150148359,
+      "proposedCategory": "high"
+    },
+    {
+      "source": "cnn.com",
+      "score": 0.658031073873161,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "nypost.com",
+      "score": 0.638970275002357,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "msnbc.com",
+      "score": 0.588104595861507,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "huffpost.com",
+      "score": 0.568450135334297,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "foxnews.com",
+      "score": 0.534260962262195,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "dailycaller.com",
+      "score": 0.469965661505635,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "theonion.com",
+      "score": 0.445775894839608,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "dailykos.com",
+      "score": 0.413735620185017,
+      "proposedCategory": "medium"
+    },
+    {
+      "source": "babylonbee.com",
+      "score": 0.386461021828994,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "dailymail.co.uk",
+      "score": 0.383860647514719,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "dailywire.com",
+      "score": 0.357498144984751,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "sputniknews.com",
+      "score": 0.346103349035805,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "breitbart.com",
+      "score": 0.297175368438483,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "rt.com",
+      "score": 0.293277424671587,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "beforeitsnews.com",
+      "score": 0.0560036536327054,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "infowars.com",
+      "score": 0.0458475179096454,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "naturalnews.com",
+      "score": 0,
+      "proposedCategory": "low"
+    },
+    {
+      "source": "globo.com",
+      "score": null,
+      "proposedCategory": "unmatched"
+    },
+    {
+      "source": "g1.globo.com",
+      "score": null,
+      "proposedCategory": "unmatched"
+    },
+    {
+      "source": "folha.uol.com.br",
+      "score": null,
+      "proposedCategory": "unmatched"
+    },
+    {
+      "source": "uol.com.br",
+      "score": null,
+      "proposedCategory": "unmatched"
+    },
+    {
+      "source": "estadao.com.br",
+      "score": null,
+      "proposedCategory": "unmatched"
+    },
+    {
+      "source": "eluniversal.com.mx",
+      "score": null,
+      "proposedCategory": "unmatched"
+    }
+  ],
+  "sensitivity": [
+    {
+      "cutoff": 0.4,
+      "belowWithin0025": 321,
+      "aboveWithin0025": 222,
+      "nearestBelow": [
+        {
+          "source": "berksconews.com",
+          "score": 0.399578496050905
+        },
+        {
+          "source": "henricotimes.com",
+          "score": 0.399578496050905
+        },
+        {
+          "source": "micdroppolitics.com",
+          "score": 0.399001681598431
+        },
+        {
+          "source": "andersoninstitute.com",
+          "score": 0.399001681598431
+        },
+        {
+          "source": "riza.it",
+          "score": 0.398867009305145
+        }
+      ],
+      "nearestAbove": [
+        {
+          "source": "macombtoday.com",
+          "score": 0.400005300363804
+        },
+        {
+          "source": "sudradio.fr",
+          "score": 0.400244293893598
+        },
+        {
+          "source": "bloomingtonleader.com",
+          "score": 0.400466866923939
+        },
+        {
+          "source": "eastidahotimes.com",
+          "score": 0.400466866923939
+        },
+        {
+          "source": "ftwaynetimes.com",
+          "score": 0.400466866923939
+        }
+      ]
+    },
+    {
+      "cutoff": 0.7,
+      "belowWithin0025": 690,
+      "aboveWithin0025": 592,
+      "nearestBelow": [
+        {
+          "source": "clinicaltrialsarena.com",
+          "score": 0.699984811952302
+        },
+        {
+          "source": "adnkronos.com",
+          "score": 0.699676702091565
+        },
+        {
+          "source": "wltx.com",
+          "score": 0.699676702091565
+        },
+        {
+          "source": "saultstar.com",
+          "score": 0.699676702091565
+        },
+        {
+          "source": "go2tutors.com",
+          "score": 0.699676702091565
+        }
+      ],
+      "nearestAbove": [
+        {
+          "source": "jamanetwork.com",
+          "score": 0.700002508921952
+        },
+        {
+          "source": "villagevoice.com",
+          "score": 0.700199370326561
+        },
+        {
+          "source": "floridanewstimes.com",
+          "score": 0.700323688913669
+        },
+        {
+          "source": "houmatoday.com",
+          "score": 0.70035757023701
+        },
+        {
+          "source": "thewell.northwell.edu",
+          "score": 0.700464786108593
+        }
+      ]
+    }
+  ],
+  "histogram": [
+    {
+      "from": 0,
+      "to": 0.02,
+      "count": 2
+    },
+    {
+      "from": 0.02,
+      "to": 0.04,
+      "count": 0
+    },
+    {
+      "from": 0.04,
+      "to": 0.06,
+      "count": 13
+    },
+    {
+      "from": 0.06,
+      "to": 0.08,
+      "count": 15
+    },
+    {
+      "from": 0.08,
+      "to": 0.1,
+      "count": 20
+    },
+    {
+      "from": 0.1,
+      "to": 0.12,
+      "count": 22
+    },
+    {
+      "from": 0.12,
+      "to": 0.14,
+      "count": 54
+    },
+    {
+      "from": 0.14,
+      "to": 0.16,
+      "count": 46
+    },
+    {
+      "from": 0.16,
+      "to": 0.18,
+      "count": 56
+    },
+    {
+      "from": 0.18,
+      "to": 0.2,
+      "count": 157
+    },
+    {
+      "from": 0.2,
+      "to": 0.22,
+      "count": 246
+    },
+    {
+      "from": 0.22,
+      "to": 0.24,
+      "count": 212
+    },
+    {
+      "from": 0.24,
+      "to": 0.26,
+      "count": 594
+    },
+    {
+      "from": 0.26,
+      "to": 0.28,
+      "count": 229
+    },
+    {
+      "from": 0.28,
+      "to": 0.3,
+      "count": 271
+    },
+    {
+      "from": 0.3,
+      "to": 0.32,
+      "count": 267
+    },
+    {
+      "from": 0.32,
+      "to": 0.34,
+      "count": 201
+    },
+    {
+      "from": 0.34,
+      "to": 0.36,
+      "count": 217
+    },
+    {
+      "from": 0.36,
+      "to": 0.38,
+      "count": 297
+    },
+    {
+      "from": 0.38,
+      "to": 0.4,
+      "count": 236
+    },
+    {
+      "from": 0.4,
+      "to": 0.42,
+      "count": 194
+    },
+    {
+      "from": 0.42,
+      "to": 0.44,
+      "count": 227
+    },
+    {
+      "from": 0.44,
+      "to": 0.46,
+      "count": 231
+    },
+    {
+      "from": 0.46,
+      "to": 0.48,
+      "count": 185
+    },
+    {
+      "from": 0.48,
+      "to": 0.5,
+      "count": 279
+    },
+    {
+      "from": 0.5,
+      "to": 0.52,
+      "count": 450
+    },
+    {
+      "from": 0.52,
+      "to": 0.54,
+      "count": 196
+    },
+    {
+      "from": 0.54,
+      "to": 0.56,
+      "count": 399
+    },
+    {
+      "from": 0.56,
+      "to": 0.58,
+      "count": 410
+    },
+    {
+      "from": 0.58,
+      "to": 0.6,
+      "count": 455
+    },
+    {
+      "from": 0.6,
+      "to": 0.62,
+      "count": 569
+    },
+    {
+      "from": 0.62,
+      "to": 0.64,
+      "count": 478
+    },
+    {
+      "from": 0.64,
+      "to": 0.66,
+      "count": 602
+    },
+    {
+      "from": 0.66,
+      "to": 0.68,
+      "count": 455
+    },
+    {
+      "from": 0.68,
+      "to": 0.7,
+      "count": 595
+    },
+    {
+      "from": 0.7,
+      "to": 0.72,
+      "count": 465
+    },
+    {
+      "from": 0.72,
+      "to": 0.74,
+      "count": 275
+    },
+    {
+      "from": 0.74,
+      "to": 0.76,
+      "count": 190
+    },
+    {
+      "from": 0.76,
+      "to": 0.78,
+      "count": 231
+    },
+    {
+      "from": 0.78,
+      "to": 0.8,
+      "count": 215
+    },
+    {
+      "from": 0.8,
+      "to": 0.82,
+      "count": 260
+    },
+    {
+      "from": 0.82,
+      "to": 0.84,
+      "count": 153
+    },
+    {
+      "from": 0.84,
+      "to": 0.86,
+      "count": 251
+    },
+    {
+      "from": 0.86,
+      "to": 0.88,
+      "count": 277
+    },
+    {
+      "from": 0.88,
+      "to": 0.9,
+      "count": 83
+    },
+    {
+      "from": 0.9,
+      "to": 0.92,
+      "count": 145
+    },
+    {
+      "from": 0.92,
+      "to": 0.94,
+      "count": 50
+    },
+    {
+      "from": 0.94,
+      "to": 0.96,
+      "count": 29
+    },
+    {
+      "from": 0.96,
+      "to": 0.98,
+      "count": 12
+    },
+    {
+      "from": 0.98,
+      "to": 1,
+      "count": 4
+    }
+  ]
+}
