@@ -12,6 +12,10 @@ _Avoid_: Published label
 The dataset's numerical quality score for a domain or a section of a site. It describes the source, not the accuracy of an individual article.
 _Avoid_: Truth score, article rating
 
+**Post label set**:
+The distinct source-quality categories attached to a post, with one label per category represented by its eligible linked sources. It is not a combined rating of the post.
+_Avoid_: Overall post rating
+
 **Unmatched domain**:
 A linked domain for which no corresponding rating is found in the selected dataset.
 _Avoid_: Low-quality source
