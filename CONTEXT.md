@@ -16,6 +16,14 @@ _Avoid_: Truth score, article rating
 The distinct source-quality categories attached to a post, with one label per category represented by its eligible linked sources. It is not a combined rating of the post.
 _Avoid_: Overall post rating
 
+**Manual publication**:
+An operator's explicit action to publish a reviewed post label set to the labeler service.
+_Avoid_: Automatic labeling
+
+**Retraction**:
+Withdrawal of a previously published label. It does not assert the opposite source-quality category.
+_Avoid_: Inverse rating
+
 **Unmatched domain**:
 A linked domain for which no corresponding rating is found in the selected dataset.
 _Avoid_: Low-quality source
