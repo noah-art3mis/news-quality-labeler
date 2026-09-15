@@ -28,6 +28,21 @@ export function createPublisher(deps: {
     return store.read(id)!;
   }
   return {
+    automate: (uri: string, input: string, evidence: Preview | null) => serial(async () => {
+      let previous = store.latest(uri);
+      if (previous?.status === 'pending') {
+        previous = await deliver(previous.id);
+        if (previous.status === 'pending') throw new Error('Automatic publication pending; delivery will retry.');
+      }
+      // The latest decision owns a revision, including an operator's retraction.
+      if (evidence && previous?.evidence.post.cid === evidence.post.cid) return;
+      if (!evidence && !previous?.target.length) return;
+      if (evidence && !evidence.postLabels.length && !previous?.target.length) return;
+      const operation = planPublication(randomUUID(), input, evidence ?? previous!.evidence,
+        evidence ? 'publish' : 'retract', previous, Math.max(now().getTime(), store.lastTimestamp()));
+      store.save(operation);
+      if ((await deliver(operation.id)).status === 'pending') throw new Error('Automatic publication pending; delivery will retry.');
+    }),
     async inspect(input: string): Promise<Review> {
       const evidence = await deps.preview(input);
       const review = { id: randomUUID(), input, evidence,

@@ -17,6 +17,8 @@ export function readRenderConfiguration(env: NodeJS.ProcessEnv) {
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT must be between 1 and 65535.');
   const enabled = env.LABELER_ENABLED ?? 'false';
   if (!['true', 'false'].includes(enabled)) throw new Error('LABELER_ENABLED must be true or false.');
+  const automatic = env.LABELER_AUTOMATIC ?? 'true';
+  if (!['true', 'false'].includes(automatic)) throw new Error('LABELER_AUTOMATIC must be true or false.');
   let publisher: PublisherConfiguration | undefined;
   if (enabled === 'true') {
     if (!env.LABELER_DID || !env.LABELER_SIGNING_KEY || !env.LABELER_STATE_DIR || !isAbsolute(env.LABELER_STATE_DIR)) {
@@ -24,6 +26,6 @@ export function readRenderConfiguration(env: NodeJS.ProcessEnv) {
     }
     publisher = { did: env.LABELER_DID, signingKey: env.LABELER_SIGNING_KEY, stateDir: env.LABELER_STATE_DIR };
   }
-  return { publicOrigin, password, port, publisher, revision: env.RENDER_GIT_COMMIT ?? 'unknown' };
+  return { publicOrigin, password, port, publisher, automatic: !!publisher && automatic === 'true', revision: env.RENDER_GIT_COMMIT ?? 'unknown' };
 }
 export type RenderConfiguration = ReturnType<typeof readRenderConfiguration>;

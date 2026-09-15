@@ -4,7 +4,7 @@ News-source ratings for links shared on Bluesky.
 
 Paste a public Bluesky post URL into a local webpage to inspect its linked sources using [published domain-quality ratings](https://github.com/hauselin/domain-quality-ratings). Results show each source's numerical rating and provisional quality category, the matched domain or section, and the dataset revision used.
 
-The default mode is a local preview that does not publish labels or require a Bluesky account. An optional manual publisher adds explicit publication and retraction after labeler account and hosting setup. The local categories are **Low quality news source** (below 0.40), **Medium quality news source** (0.40 to below 0.70), and **High quality news source** (0.70 and above). They use the unrounded score; unmatched and unresolved links remain unclassified.
+The default mode is a local preview that does not publish labels or require a Bluesky account. The hosted Render service automatically labels new Bluesky posts after labeler account and hosting setup; subscribers see those labels in their feeds. The operator page also supports manual inspection and retraction. The local categories are **Low quality news source** (below 0.40), **Medium quality news source** (0.40 to below 0.70), and **High quality news source** (0.70 and above). They use the unrounded score; unmatched and unresolved links remain unclassified.
 
 The **Proposed post labels** section shows each distinct category once for the submitted post, including categories from one quoted post. A post can receive both low and high labels when it shares sources from both categories; scores are never averaged. Individual source results retain the supporting links and their origins. See [the post-label rules](docs/post-label-preview.md).
 
@@ -21,11 +21,11 @@ npm start
 
 Open **http://localhost:4317**. On first startup, the app downloads the pinned CSV and verifies its checksum. Subsequent starts use the local dataset cache. Public post retrieval and shortened-link resolution require internet access.
 
-The server listens only on the local machine. It keeps no assessment history and sends no credentials. The dataset cache is stored in `.cache/ratings/`; it contains ratings, not inspected posts. The optional manual publisher is described below; continuous ingestion remains future work.
+The server listens only on the local machine. It keeps no assessment history and sends no credentials. The dataset cache is stored in `.cache/ratings/`; it contains ratings, not inspected posts. The local publisher and automatic Render deployment are described below.
 
-## Manual publisher
+## Hosted labeling and local publisher
 
-For hosted operation, follow the [Render setup guide](docs/render.md). The included blueprint configures a paid service with persistent storage and a password-protected operator page. Start in setup mode to obtain your HTTPS URL, then register the Bluesky labeler and enable publishing.
+For hosted operation, follow the [Render setup guide](docs/render.md). The included blueprint configures a paid service with persistent storage and a password-protected operator page. Start in setup mode to obtain your HTTPS URL, then register the Bluesky labeler and enable publishing. Automatic processing then starts with the service. See [automatic labeling](docs/automatic-labeling.md) for coverage, monitoring, and pause controls.
 
 See [publisher setup](docs/publisher-setup.md) for the dedicated account, signing key, HTTPS service, label declarations, and subscriber verification. With those configured, `npm run start:publisher` adds Publish, Retry, and Retract controls to the private operator page. Labels use informational display with no default blurring or hiding.
 

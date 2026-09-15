@@ -22,12 +22,14 @@
     "csv-parse": "^7.0.2",
     "http-proxy": "1.18.1",
     "ipaddr.js": "^2.5.0",
-    "tldts": "^7.4.13"
+    "tldts": "^7.4.13",
+    "ws": "8.21.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/http-proxy": "^1.17.17",
     "@types/node": "^26.5.1",
+    "@types/ws": "8.18.1",
     "typescript": "^7.0.2"
   }
 }

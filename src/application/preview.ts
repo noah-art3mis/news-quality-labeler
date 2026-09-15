@@ -7,13 +7,19 @@ import type { AssessedLink, Post, PostReference, PostSummary, Preview, QuoteInsp
 
 const summarize = ({ uri, cid, author, text }: Post): PostSummary => ({ uri, cid, author, text });
 
-export function createPreview(deps: {
+type PreviewDependencies = {
   ratings: RatingSnapshot;
   getPost: (reference: PostReference) => Promise<Post>;
   resolveDestination: (url: string) => Promise<string>;
-}) {
-  return async function preview(input: string): Promise<Preview> {
-    const post = await deps.getPost(parsePostUrl(input));
+};
+
+export function createPreview(deps: PreviewDependencies) {
+  const assessPost = createPostPreview(deps);
+  return async (input: string): Promise<Preview> => assessPost(await deps.getPost(parsePostUrl(input)));
+}
+
+export function createPostPreview(deps: PreviewDependencies) {
+  return async function assessPost(post: Post): Promise<Preview> {
     let quote: QuoteInspection = { status: post.quote ? 'unavailable' : 'none' };
     let quoted: Post | null = null;
     if (post.quote?.status === 'referenced') {
