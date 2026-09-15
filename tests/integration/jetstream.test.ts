@@ -47,3 +47,20 @@ test('a failed queue write closes the connection before later events can advance
   assert.equal(attempts, 1);
   assert.match(stream.status().error!, /accept/i);
 });
+
+test('catch-up events are accepted in bounded batches that yield to other work', async t => {
+  const server = new WebSocketServer({ port: 0 }); await once(server, 'listening');
+  t.after(() => new Promise<void>(resolve => server.close(() => resolve())));
+  const port = (server.address() as { port: number }).port;
+  const total = 100; let received = 0; let receivedAtYield: number | undefined;
+  server.on('connection', ws => { for (let i = 0; i < total; i++) ws.send(String(i)); });
+  const stream = startJetstream({ endpoint: `ws://127.0.0.1:${port}`, cursor: () => null,
+    receive() {
+      received++;
+      if (received === 1) setImmediate(() => { receivedAtYield = received; });
+    }, batchSize: 10 });
+  t.after(() => stream.close());
+  await until(() => received === total && receivedAtYield !== undefined);
+  await stream.close();
+  assert.equal(receivedAtYield, 10);
+});
