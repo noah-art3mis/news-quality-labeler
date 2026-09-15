@@ -101,14 +101,23 @@ test('streams signed labels over public WebSockets and refuses operator upgrades
   const labelerTarget = await transport.start(0);
   const gateway = createRenderGateway({ publicOrigin, password, operatorTarget: 'http://127.0.0.1:1', labelerTarget, revision: 'test' });
   const url = await listen(gateway.server);
-  t.after(async () => { await gateway.close(); await transport.close(); });
+  t.after(async () => {
+    await gateway.close();
+    const closed = transport.close();
+    const cleanup = setTimeout(() => {
+      for (const client of transport.app.websocketServer.clients) client.terminate();
+    }, 1500);
+    try {
+      const result = await Promise.race([closed.then(() => true), new Promise<boolean>(resolve => setTimeout(() => resolve(false), 1000))]);
+      assert.equal(result, true, 'shutdown must close the upstream subscription without waiting for its handshake timeout');
+    } finally { await closed; clearTimeout(cleanup); }
+  });
   const socket = new WebSocket(url.replace('http:', 'ws:') + '/xrpc/com.atproto.label.subscribeLabels?cursor=0');
   await new Promise<void>((resolve, reject) => { socket.addEventListener('open', () => resolve(), { once: true }); socket.addEventListener('error', () => reject(new Error('WebSocket failed')), { once: true }); });
   const received = new Promise<MessageEvent>(resolve => socket.addEventListener('message', resolve, { once: true }));
   await transport.emit({ uri: 'at://did:plc:bbbbbbbbbbbbbbbbbbbbbbbb/app.bsky.feed.post/test', cid: 'bafyreifixture',
     val: 'high-quality-news-source', neg: false, cts: new Date().toISOString() });
   assert.ok((await received).data);
-  socket.close();
   const forbidden = new WebSocket(url.replace('http:', 'ws:') + '/');
   await new Promise<void>(resolve => forbidden.addEventListener('error', () => resolve(), { once: true }));
 });

@@ -12,6 +12,13 @@ export function createRenderGateway(options: {
   const expected = digest('Basic ' + Buffer.from('admin:' + options.password).toString('base64'));
   const proxy = httpProxy.createProxyServer({ ws: true, proxyTimeout: 60_000 });
   const upgrades = new Set<Duplex>();
+  let closing = false;
+  function ownSocket(socket: Duplex) {
+    if (closing) { socket.destroy(); return; }
+    upgrades.add(socket);
+    socket.once('close', () => upgrades.delete(socket));
+  }
+  proxy.on('open', ownSocket);
   proxy.on('error', (_error, _request, response) => {
     if (response instanceof ServerResponse) {
       if (!response.headersSent) response.writeHead(502, { 'Content-Type': 'text/plain' });
@@ -52,11 +59,12 @@ export function createRenderGateway(options: {
     }
     delete request.headers.authorization;
     delete request.headers.cookie;
-    upgrades.add(socket); socket.once('close', () => upgrades.delete(socket));
+    ownSocket(socket);
     proxy.ws(request, socket, head, { target: options.labelerTarget });
   });
   return { server,
     close: () => new Promise<void>((resolve, reject) => {
+      closing = true;
       for (const socket of upgrades) socket.destroy();
       server.close(error => { proxy.close(); error ? reject(error) : resolve(); });
     }),
