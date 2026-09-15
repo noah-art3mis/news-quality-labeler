@@ -1,4 +1,5 @@
 import { createPublisherRuntime } from './adapters/publisher-runtime.ts';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createPreview } from './application/preview.ts';
 import { createBlueskyReader } from './adapters/bluesky.ts';
@@ -11,7 +12,12 @@ try {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const ratings = await createRatingStore(root).loadPinned();
   const preview = createPreview({ ratings, getPost: createBlueskyReader(), resolveDestination: createRedirectResolver() });
-  if (process.argv.includes('--publisher')) runtime = await createPublisherRuntime(root, preview);
+  if (process.argv.includes('--publisher')) {
+    const did = process.env.LABELER_DID;
+    const signingKey = process.env.LABELER_SIGNING_KEY;
+    if (!did || !signingKey) throw new Error('Set LABELER_DID and LABELER_SIGNING_KEY locally before starting publisher mode. See docs/publisher-setup.md.');
+    runtime = await createPublisherRuntime({ did, signingKey, stateDir: process.env.LABELER_STATE_DIR || join(root, '.state') }, preview);
+  }
   const server = createPreviewServer(preview, runtime?.publisher);
   server.on('error', async error => { console.error(error.message); await runtime?.close(); process.exitCode = 1; });
   server.listen(4317, '127.0.0.1', async () => {

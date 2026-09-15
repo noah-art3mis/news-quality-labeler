@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node src/main.ts",
+    "start:render": "node src/render-main.ts",
     "test": "node --test --test-isolation=none --test-reporter=dot tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "test:browser": "playwright test --reporter=line",
@@ -19,11 +20,13 @@
   "dependencies": {
     "@skyware/labeler": "0.2.0",
     "csv-parse": "^7.0.2",
+    "http-proxy": "1.18.1",
     "ipaddr.js": "^2.5.0",
     "tldts": "^7.4.13"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "@types/http-proxy": "^1.17.17",
     "@types/node": "^26.5.1",
     "typescript": "^7.0.2"
   }

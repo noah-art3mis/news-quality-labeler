@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { renderPage } from '../web/page.ts';
 import type { Preview } from '../labeling/model.ts';
 
-export function createPreviewServer(preview: (input: string) => Promise<Preview>, publisher?: Publisher) {
+export function createPreviewServer(preview: (input: string) => Promise<Preview>, publisher?: Publisher, options: { publicOrigin?: string } = {}) {
   const csrf = randomBytes(24).toString('hex');
   const publicationPage = () => publisher ? { csrf, history: publisher.history() } : undefined;
   const assets = new Map([
@@ -22,9 +22,10 @@ export function createPreviewServer(preview: (input: string) => Promise<Preview>
       response.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
       response.end(html);
     };
-    const hosts = [`127.0.0.1:${request.socket.localPort}`, `localhost:${request.socket.localPort}`];
+    const hosts = options.publicOrigin ? [new URL(options.publicOrigin).host]
+      : [`127.0.0.1:${request.socket.localPort}`, `localhost:${request.socket.localPort}`];
     if (!hosts.includes(request.headers.host ?? '')) return send(421, 'Use the local preview address.');
-    const origin = `http://${request.headers.host}`;
+    const origin = options.publicOrigin ?? `http://${request.headers.host}`;
     if (request.headers.origin && request.headers.origin !== origin) return send(403, 'Cross-origin requests are not accepted.');
     if (request.method === 'GET' && request.url === '/') return send(200, renderPage({ publication: publicationPage() }));
     const asset = assets.get(request.url ?? '');
