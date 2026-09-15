@@ -62,6 +62,10 @@ export function createRenderGateway(options: {
     delete request.headers.authorization;
     delete request.headers.cookie;
     ownSocket(socket);
+    const cursor = new URL(request.url!, origin).searchParams.get('cursor');
+    const connectedAt = Date.now();
+    console.info(JSON.stringify({ event: 'label-stream-connect', cursor, userAgent: request.headers['user-agent'] }));
+    socket.once('close', () => console.info(JSON.stringify({ event: 'label-stream-close', cursor, durationMs: Date.now() - connectedAt })));
     proxy.ws(request, socket, head, { target: options.labelerTarget });
   });
   return { server,
