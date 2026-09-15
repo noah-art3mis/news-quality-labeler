@@ -6,13 +6,14 @@ export const labelValues: Record<QualityCategory, string> = {
 };
 export type LabelEvent = { uri: string; cid: string; val: string; neg: boolean; cts: string };
 export type Publication = {
+  origin: 'manual' | 'automatic';
   id: string; input: string; evidence: Preview; target: QualityCategory[];
   action: 'publish' | 'retract'; events: LabelEvent[]; delivered: number; status: 'pending' | 'complete';
 };
 export type Review = { id: string; input: string; evidence: Preview; baseId: string | null; createdAt: number };
 
 export function planPublication(id: string, input: string, evidence: Preview, action: Publication['action'],
-  previous: Publication | null, after: number): Publication {
+  previous: Publication | null, after: number, origin: Publication['origin']): Publication {
   const target = action === 'publish' ? evidence.postLabels : [];
   const events: LabelEvent[] = [];
   const add = (category: QualityCategory, neg: boolean, post: Preview['post']) => {
@@ -26,13 +27,13 @@ export function planPublication(id: string, input: string, evidence: Preview, ac
   for (const category of target) {
     if (!sameRevision || !previous?.target.includes(category)) add(category, false, evidence.post);
   }
-  return { id, input, evidence, target, action, events, delivered: 0, status: events.length ? 'pending' : 'complete' };
+  return { id, input, evidence, target, action, origin, events, delivered: 0, status: events.length ? 'pending' : 'complete' };
 }
 
 export interface PublicationStore {
   read(id: string): Publication | null;
   latest(uri: string): Publication | null;
-  list(): Publication[];
+  list(before?: string): Publication[];
   lastTimestamp(): number;
   save(operation: Publication): void;
   delivered(id: string): void;

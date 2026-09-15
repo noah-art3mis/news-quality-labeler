@@ -34,12 +34,13 @@ export function createPublisher(deps: {
         previous = await deliver(previous.id);
         if (previous.status === 'pending') throw new Error('Automatic publication pending; delivery will retry.');
       }
-      // The latest decision owns a revision, including an operator's retraction.
-      if (evidence && previous?.evidence.post.cid === evidence.post.cid) return;
+      // An operator's retraction suppresses replay; automatic deletion permits recreation.
+      if (evidence && previous?.evidence.post.cid === evidence.post.cid &&
+        (previous.origin === 'manual' || previous.action === 'publish')) return;
       if (!evidence && !previous?.target.length) return;
       if (evidence && !evidence.postLabels.length && !previous?.target.length) return;
       const operation = planPublication(randomUUID(), input, evidence ?? previous!.evidence,
-        evidence ? 'publish' : 'retract', previous, Math.max(now().getTime(), store.lastTimestamp()));
+        evidence ? 'publish' : 'retract', previous, Math.max(now().getTime(), store.lastTimestamp()), 'automatic');
       store.save(operation);
       if ((await deliver(operation.id)).status === 'pending') throw new Error('Automatic publication pending; delivery will retry.');
     }),
@@ -63,7 +64,7 @@ export function createPublisher(deps: {
         throw new Error('The post, source evidence, or publication decision changed; inspect again.');
       }
       const operation = planPublication(id, review.input, review.evidence, 'publish', previous,
-        Math.max(now().getTime(), store.lastTimestamp()));
+        Math.max(now().getTime(), store.lastTimestamp()), 'manual');
       store.save(operation);
       return deliver(id);
     }),
@@ -76,12 +77,13 @@ export function createPublisher(deps: {
       }
       if (previous.status === 'pending') throw new Error('Retry the pending publication before retracting it.');
       const operation = planPublication(retractionId, previous.input, previous.evidence, 'retract', previous,
-        Math.max(now().getTime(), store.lastTimestamp()));
+        Math.max(now().getTime(), store.lastTimestamp()), 'manual');
       store.save(operation);
       return deliver(operation.id);
     }),
     retry: (id: string) => serial(() => deliver(id)),
-    history: () => store.list(),
+    history: (before?: string) => store.list(before),
+    currentId: (uri: string) => store.latest(uri)?.id,
   };
 }
 export type Publisher = ReturnType<typeof createPublisher>;

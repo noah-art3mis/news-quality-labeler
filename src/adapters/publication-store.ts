@@ -15,12 +15,21 @@ export function openPublicationStore(path: string, identity: string): Publicatio
     throw new Error('Publication database belongs to a different labeler identity.');
   }
   if (!savedIdentity) db.prepare('INSERT INTO identity(value) VALUES (?)').run(identity);
+  db.exec('CREATE TABLE IF NOT EXISTS publication_migrations (version INTEGER PRIMARY KEY)');
+  if (!db.prepare('SELECT 1 FROM publication_migrations WHERE version=1').get()) {
+    db.exec(`BEGIN IMMEDIATE;
+      UPDATE operations SET payload=json_set(payload, '$.origin', 'manual') WHERE json_type(payload, '$.origin') IS NULL;
+      INSERT INTO publication_migrations(version) VALUES (1);
+      COMMIT;`);
+  }
   const parse = (row: Record<string, unknown> | undefined) => row ? JSON.parse(String(row.payload)) as Publication : null;
   const read = (id: string) => parse(db.prepare('SELECT payload FROM operations WHERE id=?').get(id));
   const latest = (uri: string) => parse(db.prepare('SELECT payload FROM operations WHERE uri=? ORDER BY seq DESC LIMIT 1').get(uri));
   return {
     read, latest,
-    list: () => db.prepare('SELECT payload FROM operations ORDER BY seq DESC LIMIT 100').all().map(row => parse(row)!),
+    list: before => (before
+      ? db.prepare('SELECT payload FROM operations WHERE seq < (SELECT seq FROM operations WHERE id=?) ORDER BY seq DESC LIMIT 100').all(before)
+      : db.prepare('SELECT payload FROM operations ORDER BY seq DESC LIMIT 100').all()).map(row => parse(row)!),
     lastTimestamp: () => {
       const row = db.prepare("SELECT MAX(json_extract(payload, '$.events[#-1].cts')) AS latest FROM operations").get();
       return row?.latest ? Date.parse(String(row.latest)) : 0;

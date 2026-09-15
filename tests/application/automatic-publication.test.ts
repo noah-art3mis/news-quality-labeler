@@ -70,3 +70,12 @@ test('operator history stays bounded while older publications remain available f
   await s.publisher.automate(`${uri}0`, input, null);
   assert.equal(s.sent.at(-1)!.neg, true);
 });
+
+test('recreating an identical deleted post republishes labels without undoing manual retractions', async t => {
+  const s = scenario(); t.after(() => s.store.close());
+  const evidence = await s.preview(input);
+  await s.publisher.automate(uri, input, evidence);
+  await s.publisher.automate(uri, input, null);
+  await s.publisher.automate(uri, input, evidence);
+  assert.deepEqual(s.sent.map(e => e.neg), [false, true, false]);
+});
