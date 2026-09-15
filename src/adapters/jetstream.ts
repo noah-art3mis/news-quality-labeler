@@ -5,7 +5,7 @@ export const jetstreamEndpoint = 'wss://jetstream.us-east.bsky.network';
 export type StreamStatus = { state: 'connecting' | 'connected' | 'reconnecting' | 'stopped'; error: string | null };
 
 export function startJetstream(options: {
-  endpoint: string; cursor: () => number | null; receive: (frame: string) => void; retryMs?: number;
+  endpoint: string; cursor: () => number | null; receive: (frame: string) => void; retryMs?: number; heartbeatMs?: number;
 }) {
   const stop = new AbortController();
   let socket: WebSocket | undefined;
@@ -25,7 +25,7 @@ export function startJetstream(options: {
         if (!alive) { status.error = 'Jetstream heartbeat timed out.'; ws.terminate(); return; }
         alive = false;
         if (ws.readyState === WebSocket.OPEN) ws.ping();
-      }, 30_000);
+      }, options.heartbeatMs ?? 30_000);
       ws.on('pong', () => { alive = true; });
       ws.on('open', () => { status = { state: 'connected', error: null }; });
       ws.on('message', (data, binary) => {
@@ -33,6 +33,7 @@ export function startJetstream(options: {
         try {
           if (binary) throw new Error('Unexpected binary stream.');
           options.receive(data.toString());
+          alive = true;
         } catch {
           accepting = false;
           status.error = 'Could not accept a stream event; reconnecting from the durable cursor.';

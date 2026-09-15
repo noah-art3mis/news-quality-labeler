@@ -64,3 +64,22 @@ test('catch-up events yield between synchronous persistence operations', async t
   await stream.close();
   assert.equal(receivedAtYield, 1);
 });
+
+test('continuous catch-up progress keeps the stream alive while pong delivery is delayed', async t => {
+  const server = new WebSocketServer({ port: 0, autoPong: false }); await once(server, 'listening');
+  t.after(() => new Promise<void>(resolve => server.close(() => resolve())));
+  const port = (server.address() as { port: number }).port;
+  let connections = 0; let received = 0; let sequence = 0;
+  const sends = setInterval(() => {
+    for (const client of server.clients) client.send(String(sequence++));
+  }, 2);
+  t.after(() => clearInterval(sends));
+  server.on('connection', () => { connections++; });
+  const stream = startJetstream({ endpoint: `ws://127.0.0.1:${port}`, cursor: () => null,
+    receive() { received++; }, heartbeatMs: 10, retryMs: 5 });
+  t.after(() => stream.close());
+  await until(() => received >= 20);
+  await delay(30);
+  await stream.close();
+  assert.equal(connections, 1);
+});
