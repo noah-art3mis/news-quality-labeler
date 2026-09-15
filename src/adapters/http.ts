@@ -31,7 +31,8 @@ export function createPreviewServer(preview: (input: string) => Promise<Preview>
     if (!hosts.includes(request.headers.host ?? '')) return send(421, 'Use the local preview address.');
     const origin = options.publicOrigin ?? `http://${request.headers.host}`;
     if (request.headers.origin && request.headers.origin !== origin) return send(403, 'Cross-origin requests are not accepted.');
-    const route = new URL(request.url ?? '/', 'http://localhost');
+    const route = URL.parse(request.url ?? '/', 'http://localhost');
+    if (!route) return send(400, 'Invalid request URL.');
     if (request.method === 'GET' && route.pathname === '/') {
       return send(200, renderPage({ publication: publicationPage(route.searchParams.get('before') ?? undefined) }));
     }
