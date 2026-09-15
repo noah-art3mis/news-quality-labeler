@@ -6,6 +6,8 @@ import { openPublicationStore } from '../../src/adapters/publication-store.ts';
 import { createPublisher } from '../../src/application/publication.ts';
 import { createPreview } from '../../src/application/preview.ts';
 import type { LabelEvent } from '../../src/publication/model.ts';
+import { DatabaseSync } from 'node:sqlite';
+import { decodeJetstreamFrame } from '../../src/adapters/jetstream-frame.ts';
 
 export function frame(seq: number, options: { operation?: string; link?: string; quote?: boolean; rkey?: string } = {}) {
   return JSON.stringify({ $type: 'message', payload: { $type: 'network.bsky.jetstream.subscribeEvents#commit',
@@ -83,6 +85,21 @@ test('queue and cursor survive restart; a full queue does not acknowledge a lost
   queue.accept(2, { ...job, seq: 2 });
   queue.complete(job);
   assert.equal(queue.next()!.seq, 2, 'finishing old work must not remove an edit received while processing');
+});
+
+test('queue depth is tracked without recounting the table on every insertion', t => {
+  const originalPrepare = DatabaseSync.prototype.prepare;
+  let countQueries = 0;
+  DatabaseSync.prototype.prepare = function(sql: string) {
+    if (/count\s*\(\s*\*\s*\)/i.test(sql)) countQueries++;
+    return originalPrepare.call(this, sql);
+  };
+  t.after(() => { DatabaseSync.prototype.prepare = originalPrepare; });
+  const queue = openAutomaticStore(':memory:'); t.after(() => queue.close());
+  const job = decodeJetstreamFrame(frame(1, { link: 'https://news.example/a' })).job!;
+  for (let seq = 1; seq <= 20; seq++) queue.accept(seq, { ...job, seq, uri: `${job.uri}/${seq}` });
+  assert.equal(queue.size(), 20);
+  assert.equal(countQueries, 1, 'opening may count persisted jobs once, but accepts and size reads must not recount');
 });
 
 test('an unmatched edit supersedes a queued rated revision before publication', async t => {
