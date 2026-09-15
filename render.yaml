@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: news-quality-labeler
+    runtime: node
+    plan: 0.5c-512mb
+    buildCommand: npm ci && npm run typecheck
+    startCommand: npm run start:render
+    healthCheckPath: /healthz
+    autoDeployTrigger: checksPass
+    disk:
+      name: labeler-state
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: LABELER_ENABLED
+        sync: false
+      - key: LABELER_DID
+        value: did:plc:e42ykmdzvfam7qqk6ghzljdg
+      - key: LABELER_STATE_DIR
+        value: /var/data/news-quality

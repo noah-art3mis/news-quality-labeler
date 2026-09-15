@@ -1,5 +1,7 @@
 # Running the manual publisher
 
+For Render hosting, use the [Render setup guide](render.md), which includes the HTTPS gateway and operator authentication. The hosting instructions below describe running your own server.
+
 The publisher reuses the source preview and adds explicit Publish, Retry, and Retract actions. Inspecting a post does not publish it. Publication is bound to the inspected post CID; if the post or source evidence changes before confirmation, inspect again. Quoted sources still contribute to the submitted outer post.
 
 ## Before public operation

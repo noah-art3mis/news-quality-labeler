@@ -25,6 +25,8 @@ The server listens only on the local machine. It keeps no assessment history and
 
 ## Manual publisher
 
+For hosted operation, follow the [Render setup guide](docs/render.md). The included blueprint configures a paid service with persistent storage and a password-protected operator page. Start in setup mode to obtain your HTTPS URL, then register the Bluesky labeler and enable publishing.
+
 See [publisher setup](docs/publisher-setup.md) for the dedicated account, signing key, HTTPS service, label declarations, and subscriber verification. With those configured, `npm run start:publisher` adds Publish, Retry, and Retract controls to the private operator page. Labels use informational display with no default blurring or hiding.
 
 Publication decisions and source evidence are saved in a durable SQLite database. Repeated submissions are idempotent; changed reviews require reinspection; partial delivery can be retried after restart. Acceptance by the labeler service does not by itself establish that Bluesky displayed the label.
