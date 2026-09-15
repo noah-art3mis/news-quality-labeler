@@ -6,6 +6,7 @@ import httpProxy from 'http-proxy';
 
 export function createRenderGateway(options: {
   publicOrigin: string; password: string; operatorTarget: string; labelerTarget?: string; revision: string;
+  automaticStatus?: () => unknown;
 }) {
   const origin = validateRenderAccess(options.publicOrigin, options.password);
   const digest = (value: string) => createHash('sha256').update(value).digest();
@@ -36,7 +37,8 @@ export function createRenderGateway(options: {
         catch { healthy = false; }
       }
       response.writeHead(healthy ? 200 : 503, { 'Content-Type': 'application/json' });
-      return response.end(JSON.stringify({ status: !healthy ? 'unavailable' : options.labelerTarget ? 'ready' : 'setup-required', revision: options.revision }));
+      return response.end(JSON.stringify({ status: !healthy ? 'unavailable' : options.labelerTarget ? 'ready' : 'setup-required',
+        revision: options.revision, automatic: options.automaticStatus?.() }));
     }
     const publicRead = request.method === 'GET' && publicPaths.has(pathOf(request.url));
     if (!publicRead) {

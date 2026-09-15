@@ -55,3 +55,11 @@ _Avoid_: Reply, linked article
 **Link origin**:
 Whether an assessed link belongs to the submitted post or its quoted post. This distinction is preserved even when both posts link to the same source.
 _Avoid_: Author endorsement
+
+**Automatic publication**:
+Publication of a post label set from a newly observed Bluesky post revision, using the same source-assessment policy as manual review. Subscribers need not submit posts to the operator page.
+_Avoid_: Feed-wide historical coverage
+
+**Stream cursor**:
+The last Jetstream sequence number durably accepted together with any work it created. It describes intake progress, not confirmed label display in Bluesky.
+_Avoid_: Last published post

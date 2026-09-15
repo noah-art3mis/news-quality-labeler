@@ -1,6 +1,6 @@
 # Deploy on Render
 
-This runs the manual publisher as one Render web service: a password-protected operator page and public, read-only Bluesky label endpoints. You can use Render’s supplied HTTPS address; no separate domain or reverse proxy is needed. Publication still requires inspecting a post and clicking Publish.
+This runs automatic labeling as one Render web service, alongside a password-protected operator page and public, read-only Bluesky label endpoints. You can use Render’s supplied HTTPS address; no separate domain or reverse proxy is needed. Enabled deployments consume new posts automatically; manual inspection and retraction remain available. See [automatic labeling](automatic-labeling.md).
 
 ## Create the service
 
@@ -26,8 +26,8 @@ Add all three definitions from [label-definitions.json](../data/label-definition
 ## Enable and verify
 
 1. In Render’s Environment settings, add `LABELER_SIGNING_KEY` with the generated key and change `LABELER_ENABLED` to `true`. Save and deploy. The blueprint already sets the account DID and persistent state directory.
-2. Check `/healthz` reports `ready`. Open the main URL using the operator password; the preview now includes publishing controls.
-3. Subscribe to the labeler from a separate Bluesky account. Inspect a test post, publish its proposed labels, and verify the public query endpoint and the subscriber’s view. Then retract and check disappearance after propagation. Follow [pilot verification](publisher-setup.md#pilot-verification); a healthy server alone does not establish Bluesky ingestion or display.
+2. Check `/healthz` reports `ready`. Open the main URL using the operator password; the preview now includes publishing controls. The health response also includes automatic intake and worker progress.
+3. Subscribe to the labeler from a separate Bluesky account. Create a test post linking to a rated source, wait for its automatic labels, and verify the public query endpoint and the subscriber’s view. Then retract and check disappearance after propagation. Follow [pilot verification](publisher-setup.md#pilot-verification); a healthy server alone does not establish Bluesky ingestion or display.
 
 Public GET routes are `/xrpc/com.atproto.label.queryLabels`, `/xrpc/com.atproto.label.subscribeLabels` (including WebSocket upgrades), `/xrpc/_health`, and the deployment health endpoint `/healthz`. Other requests require the operator password. Internal services listen only on loopback. The operator’s write requests also require a matching Origin and CSRF token.
 

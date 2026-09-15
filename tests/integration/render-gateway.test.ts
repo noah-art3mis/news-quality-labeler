@@ -121,3 +121,15 @@ test('streams signed labels over public WebSockets and refuses operator upgrades
   const forbidden = new WebSocket(url.replace('http:', 'ws:') + '/');
   await new Promise<void>(resolve => forbidden.addEventListener('error', () => resolve(), { once: true }));
 });
+
+test('reports stream progress separately from label-serving readiness', async t => {
+  const upstream = createServer((_req, res) => res.end('ok')); const target = await listen(upstream);
+  const automatic = { state: 'reconnecting', cursor: 123, queued: 5 };
+  const gateway = createRenderGateway({ publicOrigin, password, operatorTarget: target, labelerTarget: target,
+    revision: 'automatic', automaticStatus: () => automatic });
+  const url = await listen(gateway.server);
+  t.after(async () => { await gateway.close(); upstream.close(); });
+  const response = await get(url, '/healthz');
+  assert.equal(response.status, 200);
+  assert.deepEqual(JSON.parse(response.body), { status: 'ready', revision: 'automatic', automatic });
+});

@@ -7,7 +7,11 @@ import type { Preview } from '../labeling/model.ts';
 
 export function createPreviewServer(preview: (input: string) => Promise<Preview>, publisher?: Publisher, options: { publicOrigin?: string } = {}) {
   const csrf = randomBytes(24).toString('hex');
-  const publicationPage = () => publisher ? { csrf, history: publisher.history() } : undefined;
+  const publicationPage = (before?: string) => {
+    if (!publisher) return undefined;
+    const history = publisher.history(before);
+    return { csrf, history, currentIds: history.filter(operation => publisher.currentId(operation.evidence.post.uri) === operation.id).map(operation => operation.id) };
+  };
   const assets = new Map([
     ['/style.css', { type: 'text/css', body: readFileSync(new URL('../web/style.css', import.meta.url)) }],
     ['/form.js', { type: 'text/javascript', body: readFileSync(new URL('../web/form.js', import.meta.url)) }],
@@ -27,7 +31,11 @@ export function createPreviewServer(preview: (input: string) => Promise<Preview>
     if (!hosts.includes(request.headers.host ?? '')) return send(421, 'Use the local preview address.');
     const origin = options.publicOrigin ?? `http://${request.headers.host}`;
     if (request.headers.origin && request.headers.origin !== origin) return send(403, 'Cross-origin requests are not accepted.');
-    if (request.method === 'GET' && request.url === '/') return send(200, renderPage({ publication: publicationPage() }));
+    const route = URL.parse(request.url ?? '/', 'http://localhost');
+    if (!route) return send(400, 'Invalid request URL.');
+    if (request.method === 'GET' && route.pathname === '/') {
+      return send(200, renderPage({ publication: publicationPage(route.searchParams.get('before') ?? undefined) }));
+    }
     const asset = assets.get(request.url ?? '');
     if (request.method === 'GET' && asset) {
       response.writeHead(200, { 'Content-Type': asset.type });

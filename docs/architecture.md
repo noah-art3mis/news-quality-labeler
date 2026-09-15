@@ -43,3 +43,9 @@ One SQLite database holds the application ledger and the protocol library's sign
 `deployment/render.ts` composes the existing publisher with a public gateway and two loopback services. The gateway exposes only the label protocol’s read routes and WebSocket subscription; the operator page requires HTTP Basic authentication. The operator validates its fixed external HTTPS origin and CSRF token, without trusting forwarded origin headers. Credentials are removed before proxying. Render terminates HTTPS and supplies the public port and origin.
 
 Explicit setup mode starts only a protected instruction page and deployment health endpoint, allowing registration against the allocated hostname before a signing key exists. Enabled mode requires an identity, signing key, and absolute persistent state directory. Both modes report their deployed revision; enabled health also checks the protocol service. Account registration remains a manual operation outside the application.
+
+## Automatic ingestion
+
+Render composes the [automatic consumer](automatic-labeling.md) with the same publisher instance. The WebSocket adapter reconnects from a durable sequence cursor. Queue acceptance and cursor advancement share one transaction; jobs coalesce by post URI. Application workers reuse `createPostPreview`, which assesses a supplied post, while `createPreview` first retrieves one by URL. Matching policy remains in the existing domain modules.
+
+Automatic and manual mutations use the publisher's single serialized writer. Queue acknowledgement follows completed publication, allowing restart to retry without duplicate signed events. The persistent queue lives in `automatic.db` alongside `labels.db`; back up both together. Publication lookup and event timestamp indexes avoid scanning the entire ledger for each automatic decision.

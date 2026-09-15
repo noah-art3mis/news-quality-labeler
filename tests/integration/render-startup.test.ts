@@ -24,3 +24,12 @@ test('publisher deployment requires explicit durable storage and rejects malform
     LABELER_SIGNING_KEY: '01'.repeat(32), LABELER_STATE_DIR: '/var/data/news-quality' });
   assert.equal(config.publisher?.stateDir, '/var/data/news-quality');
 });
+
+test('enabled Render deployments start automatic labeling by default and can pause it explicitly', () => {
+  const enabled = { ...env, LABELER_ENABLED: 'true', LABELER_DID: 'did:plc:example',
+    LABELER_SIGNING_KEY: '01'.repeat(32), LABELER_STATE_DIR: '/var/data/news-quality' };
+  assert.equal(readRenderConfiguration(enabled).automatic, true);
+  assert.equal(readRenderConfiguration({ ...enabled, LABELER_AUTOMATIC: 'false' }).automatic, false);
+  assert.equal(readRenderConfiguration(env).automatic, false);
+  assert.throws(() => readRenderConfiguration({ ...enabled, LABELER_AUTOMATIC: 'yes' }), /LABELER_AUTOMATIC/);
+});
