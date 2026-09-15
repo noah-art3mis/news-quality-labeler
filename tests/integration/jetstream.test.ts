@@ -48,7 +48,7 @@ test('a failed queue write closes the connection before later events can advance
   assert.match(stream.status().error!, /accept/i);
 });
 
-test('catch-up events are accepted in bounded batches that yield to other work', async t => {
+test('catch-up events yield between synchronous persistence operations', async t => {
   const server = new WebSocketServer({ port: 0 }); await once(server, 'listening');
   t.after(() => new Promise<void>(resolve => server.close(() => resolve())));
   const port = (server.address() as { port: number }).port;
@@ -58,9 +58,9 @@ test('catch-up events are accepted in bounded batches that yield to other work',
     receive() {
       received++;
       if (received === 1) setImmediate(() => { receivedAtYield = received; });
-    }, batchSize: 10 });
+    } });
   t.after(() => stream.close());
   await until(() => received === total && receivedAtYield !== undefined);
   await stream.close();
-  assert.equal(receivedAtYield, 10);
+  assert.equal(receivedAtYield, 1);
 });
